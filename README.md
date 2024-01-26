@@ -12,10 +12,6 @@ An application that translate children CodeBlock toys into Google's Blockly Code
 
 - Names of folders and files should clearly convey their intent. For example, app/heroes/hero-list.component.ts may contain a component that manages a list of heroes.
 
-- Service names
-
-  - Do suffix a service class name with Service. For example, something that gets data or heroes should be called a DataService or a HeroService.
-
 - Bootstrapping
 
   - Do put bootstrapping and platform logic for the application in a file named main.ts.
@@ -60,13 +56,6 @@ An application that translate children CodeBlock toys into Google's Blockly Code
   - Use uppercase letters and underscores to separate words in constant names.
   - Use descriptive names that clearly convey the purpose of the constant.
   - Use consistent naming for related constants.
-
-- Life cycle hooks: This section includes any life cycle hooks that are implemented in the component, such as ngOnInit, ngOnDestroy, etc.
-
-  - Properties: This section defines the component properties, such as inputs and outputs.
-  - Methods: This section defines the methods used in the component.
-  - Template: This section defines the HTML template for the component.
-  - Styles: This section defines the CSS styles for the component.
 
 - CSS Naming Convention
   - Use hyphenated (kebab-case) names for classes and IDs.

@@ -1,0 +1,10 @@
+<input type="file" accept="image/*" capture="environment" />
+<video
+  *ngIf="true"
+  #videoElement
+  controls
+  autoplay
+  [srcObject]="videoStream"
+></video>
+<div #outputContainer></div>
+<button (click)="captureSnapshot()">Capture</button>
