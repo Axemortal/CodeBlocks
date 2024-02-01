@@ -1,0 +1,45 @@
+#container {
+  height: 100vh;
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    position: relative;
+
+    > div {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 50vh;
+      min-width: 400px;
+      background-color: white;
+      padding: 10px;
+      border-radius: 8px;
+
+      > div {
+        margin: 0 auto 25px;
+
+        #file-upload {
+          display: none;
+          visibility: hidden;
+        }
+      }
+
+      > div:last-of-type {
+        margin: 0 auto;
+      }
+
+      .not-supported {
+        max-width: 300px;
+        color: rgb(255, 79, 79);
+        text-align: center;
+        overflow-wrap: break-word;
+      }
+    }
+  }
+}

@@ -1,10 +1,28 @@
-<input type="file" accept="image/*" capture="environment" />
-<video
-  *ngIf="true"
-  #videoElement
-  controls
-  autoplay
-  [srcObject]="videoStream"
-></video>
-<div #outputContainer></div>
-<button (click)="captureSnapshot()">Capture</button>
+<div id="container">
+  <div>
+    <div>
+      <div *ngIf="!isOpenCamera">
+        <label class="btn" for="file-upload">Upload Image</label>
+        <input id="file-upload" type="file" />
+      </div>
+      <div *ngIf="isSupported; else notSupported">
+        <button
+          *ngIf="!isOpenCamera; else appCapture"
+          class="btn"
+          (click)="openCamera()"
+        >
+          Take a picture
+        </button>
+        <ng-template #appCapture>
+          <app-capture (offCameraEvent)="onOffCamera()"></app-capture>
+        </ng-template>
+      </div>
+      <ng-template #notSupported>
+        <div class="not-supported">
+          Your device does not support taking of images! Either upload an image
+          or change your device to a supported one.
+        </div></ng-template
+      >
+    </div>
+  </div>
+</div>
