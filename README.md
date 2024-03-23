@@ -2,6 +2,22 @@
 
 An application that translate children CodeBlock toys into Google's Blockly Code
 
+# Docker
+
+## Build Image
+
+```
+docker build -t codeblocks .
+```
+
+## Run Docker Image
+
+Bind the container to port 3000 on localhost:
+
+```
+docker run -p 127.0.0.1:3000:3000 --name codeblocks codeblocks
+```
+
 # General Naming Guidelines
 
 - Do follow a pattern that describes the symbol's feature then its type. The recommended pattern is feature.type.ts.
