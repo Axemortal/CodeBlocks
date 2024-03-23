@@ -1,15 +1,7 @@
-<div class="video-container" [ngClass]="{ hide: isSnapshotTaken }">
-  <video #videoElement controls autoplay [srcObject]="videoStream"></video>
-  <div>
-    <button class="btn" (click)="captureSnapshot()">Capture</button>
-    <button class="btn" (click)="offCamera()">Cancel</button>
-  </div>
+<div class="video-container">
+  <canvas #canvasElement hidden></canvas>
 </div>
-<div
-  #outputContainer
-  class="output-container"
-  [ngClass]="{ hide: !isSnapshotTaken }"
-></div>
-<button *ngIf="isSnapshotTaken" class="btn" (click)="deleteSnapshot()">
-  Cancel
-</button>
+
+<div class="output-container">
+  {{ output }}
+</div>

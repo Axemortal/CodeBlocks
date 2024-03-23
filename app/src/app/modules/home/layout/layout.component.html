@@ -14,7 +14,8 @@
           Take a picture
         </button>
         <ng-template #appCapture>
-          <app-capture (offCameraEvent)="onOffCamera()"></app-capture>
+          <app-capture></app-capture>
+          <button class="btn" (click)="onOffCamera()">Stop Recording</button>
         </ng-template>
       </div>
       <ng-template #notSupported>

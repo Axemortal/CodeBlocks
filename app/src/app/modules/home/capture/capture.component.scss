@@ -2,21 +2,11 @@
   display: flex;
   flex-direction: column;
 
-  video {
+  canvas {
     margin-bottom: 10px;
-  }
-
-  > div {
-    button:first-of-type {
-      margin-right: 10px;
-    }
   }
 }
 
 .output-container {
   margin-bottom: 10px;
-}
-
-.hide {
-  display: none;
 }

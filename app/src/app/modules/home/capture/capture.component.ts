@@ -1,71 +1,118 @@
-import {
-  Component,
-  ElementRef,
-  EventEmitter,
-  OnInit,
-  Output,
-  Renderer2,
-  ViewChild,
-} from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+
+import jsQR, { QRCode } from 'jsqr';
+import { Point } from 'jsqr/dist/locator';
 
 @Component({
   selector: 'app-capture',
   templateUrl: './capture.component.html',
   styleUrl: './capture.component.scss',
 })
-export class CaptureComponent implements OnInit {
-  @Output() offCameraEvent = new EventEmitter<boolean>();
-  @ViewChild('videoElement', { static: false }) videoElement:
-    | ElementRef
-    | undefined;
-  @ViewChild('outputContainer', { static: false }) outputContainer:
-    | ElementRef
-    | undefined;
-  videoStream: any;
-  isSnapshotTaken = false;
+export class CaptureComponent implements AfterViewInit {
+  @ViewChild('canvasElement', { static: false })
+  canvasElement!: ElementRef<HTMLCanvasElement>;
 
-  constructor(private renderer: Renderer2) {}
+  private video!: HTMLVideoElement;
+  private canvas!: HTMLCanvasElement;
+  private canvasContext!: CanvasRenderingContext2D;
+  output: string =
+    '🎥 Unable to access video stream (please make sure you have a webcam enabled)';
 
-  ngOnInit(): void {
-    const mediaConstraints = {
-      video: true,
-    };
+  constructor() {}
 
-    window.navigator.mediaDevices
+  ngAfterViewInit(): void {
+    this.initializeCamera();
+  }
+
+  ngOnDestroy(): void {
+    this.stopCamera();
+  }
+
+  private initializeCamera(): void {
+    this.video = document.createElement('video');
+    this.canvas = this.canvasElement.nativeElement;
+    const context = this.canvas.getContext('2d');
+    if (!context) {
+      throw new Error('Canvas context not found');
+    }
+    this.canvasContext = context;
+
+    // Use facingMode: environment to attempt to get the front camera on phones
+    const mediaConstraints = { video: { facingMode: 'environment' } };
+    navigator.mediaDevices
       .getUserMedia(mediaConstraints)
       .then((stream) => {
-        this.videoStream = stream;
+        this.video.srcObject = stream;
+        this.video.setAttribute('playsinline', 'true'); // required to tell iOS safari we don't want fullscreen
+        this.video.play();
+        requestAnimationFrame(() => this.tick());
       })
       .catch((err) => {
         console.log(err);
       });
   }
 
-  captureSnapshot() {
-    const video = this.videoElement?.nativeElement;
-    const canvas = document.createElement('canvas');
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    canvas
-      ?.getContext('2d')
-      ?.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
-    const image = canvas.toDataURL('image/png');
-    const outputDiv: HTMLDivElement = this.outputContainer?.nativeElement;
-    this.renderer.appendChild(outputDiv, canvas);
-    this.isSnapshotTaken = true;
-    return image;
+  private stopCamera(): void {
+    const stream = this.video.srcObject as MediaStream;
+    if (stream) {
+      stream.getTracks().forEach((track) => track.stop());
+    }
   }
 
-  deleteSnapshot() {
-    const outputDiv: HTMLDivElement = this.outputContainer?.nativeElement;
-    outputDiv.innerHTML = '';
-    this.isSnapshotTaken = false;
+  private drawLine(begin: Point, end: Point, color: string): void {
+    this.canvasContext.beginPath();
+    this.canvasContext.moveTo(begin.x, begin.y);
+    this.canvasContext.lineTo(end.x, end.y);
+    this.canvasContext.lineWidth = 4;
+    this.canvasContext.strokeStyle = color;
+    this.canvasContext.stroke();
   }
 
-  offCamera() {
-    this.videoStream.getTracks().forEach((track: any) => {
-      track.stop();
-    });
-    this.offCameraEvent.emit(false);
+  private drawQRCodeBorders(code: QRCode): void {
+    const {
+      topLeftCorner,
+      topRightCorner,
+      bottomRightCorner,
+      bottomLeftCorner,
+    } = code.location;
+    this.drawLine(topLeftCorner, topRightCorner, '#FF3B58');
+    this.drawLine(topRightCorner, bottomRightCorner, '#FF3B58');
+    this.drawLine(bottomRightCorner, bottomLeftCorner, '#FF3B58');
+    this.drawLine(bottomLeftCorner, topLeftCorner, '#FF3B58');
+  }
+
+  private tick(): void {
+    this.output = '⌛ Loading video...';
+    if (this.video.readyState === this.video.HAVE_ENOUGH_DATA) {
+      this.canvas.hidden = false;
+      this.canvas.height = this.video.videoHeight;
+      this.canvas.width = this.video.videoWidth;
+      this.canvasContext.drawImage(
+        this.video,
+        0,
+        0,
+        this.canvas.width,
+        this.canvas.height
+      );
+      const imageData = this.canvasContext.getImageData(
+        0,
+        0,
+        this.canvas.width,
+        this.canvas.height
+      );
+
+      const code = jsQR(imageData.data, imageData.width, imageData.height, {
+        inversionAttempts: 'dontInvert',
+      });
+
+      if (code) {
+        console.log(code);
+        this.drawQRCodeBorders(code);
+        this.output = code.data;
+      } else {
+        this.output = '🔍 No QR code found';
+      }
+    }
+    requestAnimationFrame(() => this.tick());
   }
 }
