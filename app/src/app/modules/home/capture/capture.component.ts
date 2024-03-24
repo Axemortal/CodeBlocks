@@ -78,9 +78,15 @@ export class CaptureComponent implements AfterViewInit {
       z: ((currentAcceleration?.z ?? 0) + (previousAcceleration?.z ?? 0)) / 2,
     };
 
-    this.velocity.x += averageAcceleration.x * dt;
-    this.velocity.y += averageAcceleration.y * dt;
-    this.velocity.z += averageAcceleration.z * dt;
+    // Damping factor (friction term)
+    const dampingFactor = 0.9; // Adjust as needed
+
+    this.velocity.x =
+      this.velocity.x * dampingFactor + averageAcceleration.x * dt;
+    this.velocity.y =
+      this.velocity.y * dampingFactor + averageAcceleration.y * dt;
+    this.velocity.z =
+      this.velocity.z * dampingFactor + averageAcceleration.z * dt;
 
     this.motionData = event;
   }
