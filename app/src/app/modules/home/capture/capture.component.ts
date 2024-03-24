@@ -225,7 +225,10 @@ export class CaptureComponent implements AfterViewInit {
 
       if (this.capturedData.length > 0) {
         const output = this.capturedData
-          .map((code) => code.data + code.location.bottomLeftCorner)
+          .map(
+            (code) =>
+              `${code.data}, (${code.location.bottomLeftCorner.x}, ${code.location.bottomLeftCorner.y})`
+          )
           .join(', ');
         this.output = '📸 Captured data: ' + output;
       } else {
