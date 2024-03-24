@@ -24,10 +24,12 @@ export class CaptureComponent implements AfterViewInit {
     '🎥 Unable to access video stream (please make sure you have a webcam enabled)';
 
   private aspectRatio: number | undefined;
+  private focalLength = 1; // TODO: Find the focal length of the camera
   position: { x: number; y: number; z: number } = { x: 0, y: 0, z: 0 };
   velocity: { x: number; y: number; z: number } = { x: 0, y: 0, z: 0 };
+  depth: number = 0;
   motionData: DeviceMotionEvent | undefined;
-  private capturedData: DetectedQRCode[] = [];
+  private capturedData: QRCode[] = [];
   private video!: HTMLVideoElement;
   private canvas!: HTMLCanvasElement;
   private canvasContext!: CanvasRenderingContext2D;
@@ -206,20 +208,29 @@ export class CaptureComponent implements AfterViewInit {
         this.canvas.height
       );
 
+      const grayscaleData = convertToGrayscale(imageData);
+      this.depth = estimateDepth(grayscaleData);
+
       const code = jsQR(imageData.data, imageData.width, imageData.height, {
         inversionAttempts: 'dontInvert',
       });
 
-      if (code) {
-        console.log(code);
+      if (code && this.isValidCode(code.data)) {
         this.drawQRCodeBorders(code);
-        if (!this.checkForRepeatedQRCode(code)) {
-          this.capturedData.push(code);
+        let codeWithUpdatedLocation = this.modifyQRLocationData(
+          code,
+          this.depth
+        );
+        if (!this.checkForRepeatedQRCode(codeWithUpdatedLocation)) {
+          this.capturedData.push(codeWithUpdatedLocation);
         }
       }
 
       if (this.capturedData.length > 0) {
-        this.output = '📸 Captured data: ' + this.capturedData.join(', ');
+        const output = this.capturedData
+          .map((code) => code.data + code.location.bottomLeftCorner)
+          .join(', ');
+        this.output = '📸 Captured data: ' + output;
       } else {
         this.output = '🔍 No QR code found';
       }
@@ -227,19 +238,48 @@ export class CaptureComponent implements AfterViewInit {
     requestAnimationFrame(() => this.tick());
   }
 
-  private checkForRepeatedQRCode(QRCode: DetectedQRCode): boolean {
+  private isValidCode(data: string): boolean {
+    if (data in BlockQRCode) {
+      return true;
+    }
     return false;
   }
-}
 
-interface DetectedQRCode {
-  data: string;
-  location: {
-    topLeftCorner: Point;
-    topRightCorner: Point;
-    bottomRightCorner: Point;
-    bottomLeftCorner: Point;
-  };
+  private modifyQRLocationData(code: QRCode, depth: number): QRCode {
+    const xTranslation = (depth / this.focalLength) * this.position.x;
+    const yTranslation = (depth / this.focalLength) * this.position.y;
+
+    const updateLocation = (point: Point) => {
+      point.x += xTranslation;
+      point.y += yTranslation;
+    };
+
+    updateLocation(code.location.topRightCorner);
+    updateLocation(code.location.bottomRightCorner);
+    updateLocation(code.location.bottomLeftCorner);
+    updateLocation(code.location.topLeftCorner);
+
+    return code;
+  }
+
+  private checkForRepeatedQRCode(code: QRCode): boolean {
+    for (const captured of this.capturedData) {
+      const distance = this.calculateDistance(code.location, captured.location);
+      if (distance < 10) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private calculateDistance(
+    qrOneLocation: QRCodeLocation,
+    qrTwoLocation: QRCodeLocation
+  ): number {
+    const dx = qrOneLocation.topLeftCorner.x - qrTwoLocation.topLeftCorner.x;
+    const dy = qrOneLocation.topLeftCorner.y - qrTwoLocation.topLeftCorner.y;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
 }
 
 enum BlockQRCode {
@@ -249,4 +289,65 @@ enum BlockQRCode {
   TURN_RIGHT,
   IF,
   WHILE,
+}
+
+interface QRCodeLocation {
+  topRightCorner: Point;
+  topLeftCorner: Point;
+  bottomRightCorner: Point;
+  bottomLeftCorner: Point;
+}
+
+function convertToGrayscale(imageData: ImageData) {
+  const grayscaleData = new Uint8ClampedArray(
+    imageData.width * imageData.height
+  );
+  for (let i = 0; i < imageData.data.length; i += 4) {
+    const avg =
+      (imageData.data[i] + imageData.data[i + 1] + imageData.data[i + 2]) / 3;
+    grayscaleData[i / 4] = avg; // Store single channel (grayscale) value
+  }
+  return grayscaleData;
+}
+
+function estimateDepth(grayscaleData: Uint8ClampedArray) {
+  const width = Math.sqrt(grayscaleData.length); // Calculate width from array length
+  const height = grayscaleData.length / width; // Calculate height from array length
+  const maxDisparity = 50; // Maximum disparity to search for
+
+  const depthMap = new Float32Array(width * height).fill(0);
+  let totalDepth = 0;
+
+  for (let y = 0; y < height; y++) {
+    for (let x = maxDisparity; x < width; x++) {
+      let minDiff = Number.MAX_SAFE_INTEGER;
+      let bestDisparity = 0;
+
+      for (let d = 1; d <= maxDisparity; d++) {
+        const leftIdx = y * width + x;
+        const rightIdx = y * width + (x - d);
+
+        // Check bounds
+        if (rightIdx >= 0) {
+          // Calculate absolute difference between grayscale values
+          const diff = Math.abs(
+            grayscaleData[leftIdx] - grayscaleData[rightIdx]
+          );
+
+          if (diff < minDiff) {
+            minDiff = diff;
+            bestDisparity = d;
+          }
+        }
+      }
+
+      // Store disparity as depth value (inverse relationship)
+      const depth = 1 / bestDisparity;
+      depthMap[y * width + x] = depth;
+      totalDepth += depth;
+    }
+  }
+
+  const averageDepth = totalDepth / (width * height);
+  return averageDepth;
 }
