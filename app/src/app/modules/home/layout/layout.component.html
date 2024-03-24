@@ -1,29 +1,25 @@
-<div id="container">
-  <div>
-    <div>
-      <div *ngIf="!isOpenCamera">
-        <label class="btn" for="file-upload">Upload Image</label>
-        <input id="file-upload" type="file" />
-      </div>
-      <div *ngIf="isSupported; else notSupported">
-        <button
-          *ngIf="!isOpenCamera; else appCapture"
-          class="btn"
-          (click)="openCamera()"
-        >
-          Take a picture
-        </button>
-        <ng-template #appCapture>
-          <app-capture></app-capture>
-          <button class="btn" (click)="onOffCamera()">Stop Recording</button>
-        </ng-template>
-      </div>
-      <ng-template #notSupported>
-        <div class="not-supported">
-          Your device does not support taking of images! Either upload an image
-          or change your device to a supported one.
-        </div></ng-template
-      >
-    </div>
+<div class="container">
+  <div *ngIf="!isOpenCamera">
+    <label class="btn" for="file-upload">Upload Image</label>
+    <input id="file-upload" type="file" />
   </div>
+  <div *ngIf="isSupported; else notSupported">
+    <button
+      *ngIf="!isOpenCamera; else appCapture"
+      class="btn"
+      (click)="openCamera()"
+    >
+      Start Recording
+    </button>
+    <ng-template #appCapture>
+      <app-capture></app-capture>
+      <button class="btn" (click)="onOffCamera()">Stop Recording</button>
+    </ng-template>
+  </div>
+  <ng-template #notSupported>
+    <div class="not-supported">
+      Your device does not support taking of images! Either upload an image or
+      change your device to a supported one.
+    </div></ng-template
+  >
 </div>

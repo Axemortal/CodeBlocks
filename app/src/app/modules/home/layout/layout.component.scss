@@ -1,45 +1,38 @@
-#container {
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: 100vh;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 50vh;
+  width: 95%;
+  background-color: white;
+  border-radius: 8px;
 
   > div {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100%;
-    width: 100%;
-    position: relative;
+    width: calc(100% - 20px);
+    padding: 10px;
 
-    > div {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      min-height: 50vh;
-      min-width: 400px;
-      background-color: white;
-      padding: 10px;
-      border-radius: 8px;
+    #file-upload {
+      display: none;
+      visibility: hidden;
+    }
 
-      > div {
-        margin: 0 auto 25px;
-
-        #file-upload {
-          display: none;
-          visibility: hidden;
-        }
-      }
-
-      > div:last-of-type {
-        margin: 0 auto;
-      }
-
-      .not-supported {
-        max-width: 300px;
-        color: rgb(255, 79, 79);
-        text-align: center;
-        overflow-wrap: break-word;
-      }
+    .not-supported {
+      max-width: 300px;
+      color: rgb(255, 79, 79);
+      text-align: center;
+      overflow-wrap: break-word;
     }
   }
 }
