@@ -208,9 +208,6 @@ export class CaptureComponent implements AfterViewInit {
         this.canvas.height
       );
 
-      const grayscaleData = convertToGrayscale(imageData);
-      this.depth = estimateDepth(grayscaleData);
-
       const code = jsQR(imageData.data, imageData.width, imageData.height, {
         inversionAttempts: 'dontInvert',
       });
@@ -296,58 +293,4 @@ interface QRCodeLocation {
   topLeftCorner: Point;
   bottomRightCorner: Point;
   bottomLeftCorner: Point;
-}
-
-function convertToGrayscale(imageData: ImageData) {
-  const grayscaleData = new Uint8ClampedArray(
-    imageData.width * imageData.height
-  );
-  for (let i = 0; i < imageData.data.length; i += 4) {
-    const avg =
-      (imageData.data[i] + imageData.data[i + 1] + imageData.data[i + 2]) / 3;
-    grayscaleData[i / 4] = avg; // Store single channel (grayscale) value
-  }
-  return grayscaleData;
-}
-
-function estimateDepth(grayscaleData: Uint8ClampedArray) {
-  const width = Math.sqrt(grayscaleData.length); // Calculate width from array length
-  const height = grayscaleData.length / width; // Calculate height from array length
-  const maxDisparity = 50; // Maximum disparity to search for
-
-  const depthMap = new Float32Array(width * height).fill(0);
-  let totalDepth = 0;
-
-  for (let y = 0; y < height; y++) {
-    for (let x = maxDisparity; x < width; x++) {
-      let minDiff = Number.MAX_SAFE_INTEGER;
-      let bestDisparity = 0;
-
-      for (let d = 1; d <= maxDisparity; d++) {
-        const leftIdx = y * width + x;
-        const rightIdx = y * width + (x - d);
-
-        // Check bounds
-        if (rightIdx >= 0) {
-          // Calculate absolute difference between grayscale values
-          const diff = Math.abs(
-            grayscaleData[leftIdx] - grayscaleData[rightIdx]
-          );
-
-          if (diff < minDiff) {
-            minDiff = diff;
-            bestDisparity = d;
-          }
-        }
-      }
-
-      // Store disparity as depth value (inverse relationship)
-      const depth = 1 / bestDisparity;
-      depthMap[y * width + x] = depth;
-      totalDepth += depth;
-    }
-  }
-
-  const averageDepth = totalDepth / (width * height);
-  return averageDepth;
 }
