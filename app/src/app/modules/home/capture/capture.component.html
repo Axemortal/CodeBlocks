@@ -13,31 +13,33 @@
 <div class="motion-data">
   <div class="motion-data-row">
     Acceleration:
-    {{ motionData?.acceleration?.x }}, {{ motionData?.acceleration?.y }},
-    {{ motionData?.acceleration?.z }}
-  </div>
-
-  <div class="motion-data-row">
-    Acceleration including gravity:
-    {{ motionData?.accelerationIncludingGravity?.x }},
-    {{ motionData?.accelerationIncludingGravity?.y }},
-    {{ motionData?.accelerationIncludingGravity?.z }}
+    {{ motionData?.acceleration?.x | number : "1.0-3" }},
+    {{ motionData?.acceleration?.y | number : "1.0-3" }},
+    {{ motionData?.acceleration?.z | number : "1.0-3" }}
   </div>
 
   <div class="motion-data-row">
     Rotation rate:
-    {{ motionData?.rotationRate?.alpha }}, {{ motionData?.rotationRate?.beta }},
-    {{ motionData?.rotationRate?.gamma }}
+    {{ motionData?.rotationRate?.alpha | number : "1.0-3" }},
+    {{ motionData?.rotationRate?.beta | number : "1.0-3" }},
+    {{ motionData?.rotationRate?.gamma | number : "1.0-3" }}
   </div>
 
   <div class="motion-data-row">
     Interval:
-    {{ motionData?.interval }},
-    {{ motionData?.timeStamp }}
+    {{ motionData?.interval | number : "1.0-3" }},
+    {{ motionData?.timeStamp | number : "1.0-3" }}
   </div>
 
   <div class="motion-data-row">
     Velocity:
-    {{ velocity.x }}, {{ velocity.y }}, {{ velocity.z }}
+    {{ velocity.x | number : "1.0-3" }}, {{ velocity.y | number : "1.0-3" }},
+    {{ velocity.z | number : "1.0-3" }}
+  </div>
+
+  <div class="motion-data-row">
+    Position:
+    {{ position.x | number : "1.0-3" }}, {{ position.y | number : "1.0-3" }},
+    {{ position.z | number : "1.0-3" }}
   </div>
 </div>

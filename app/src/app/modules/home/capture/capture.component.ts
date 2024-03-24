@@ -24,7 +24,7 @@ export class CaptureComponent implements AfterViewInit {
     '🎥 Unable to access video stream (please make sure you have a webcam enabled)';
 
   private aspectRatio: number | undefined;
-  private position: { x: number; y: number } = { x: 0, y: 0 };
+  position: { x: number; y: number; z: number } = { x: 0, y: 0, z: 0 };
   velocity: { x: number; y: number; z: number } = { x: 0, y: 0, z: 0 };
   motionData: DeviceMotionEvent | undefined;
   private capturedData: DetectedQRCode[] = [];
@@ -78,9 +78,9 @@ export class CaptureComponent implements AfterViewInit {
       z: ((currentAcceleration?.z ?? 0) + (previousAcceleration?.z ?? 0)) / 2,
     };
 
-    // Damping factor (friction term)
-    const dampingFactor = 0.9; // Adjust as needed
+    const dampingFactor = 0.98;
 
+    const previousVelocity = this.velocity;
     this.velocity.x =
       this.velocity.x * dampingFactor + averageAcceleration.x * dt;
     this.velocity.y =
@@ -89,6 +89,25 @@ export class CaptureComponent implements AfterViewInit {
       this.velocity.z * dampingFactor + averageAcceleration.z * dt;
 
     this.motionData = event;
+
+    // Skip position calculation for the first two motion events
+    if (
+      previousVelocity.x === 0 &&
+      previousVelocity.y === 0 &&
+      previousVelocity.z === 0
+    ) {
+      return;
+    }
+
+    const averageVelocity = {
+      x: (this.velocity.x + previousVelocity.x) / 2,
+      y: (this.velocity.y + previousVelocity.y) / 2,
+      z: (this.velocity.z + previousVelocity.z) / 2,
+    };
+
+    this.position.x += averageVelocity.x * dt;
+    this.position.y += averageVelocity.y * dt;
+    this.position.z += averageVelocity.z * dt;
   }
 
   calculateAspectRatio(): void {
