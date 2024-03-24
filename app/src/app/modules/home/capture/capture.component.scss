@@ -20,3 +20,26 @@
 .output-container {
   margin: 10px 0;
 }
+
+.motion-data {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+
+  .motion-data-row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 5px 0;
+    border-bottom: 1px solid #ccc;
+
+    .motion-data-label {
+      font-weight: bold;
+    }
+  }
+}

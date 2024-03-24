@@ -19,19 +19,23 @@ export class CaptureComponent implements AfterViewInit {
   @ViewChild('canvasElement', { static: false })
   canvasElement!: ElementRef<HTMLCanvasElement>;
 
-  aspectRatio: number | undefined;
   videoContainerWidth: string | undefined;
   videoContainerHeight: string | undefined;
+  output: string =
+    '🎥 Unable to access video stream (please make sure you have a webcam enabled)';
+
+  private aspectRatio: number | undefined;
+  motionData: DeviceMotionEvent | undefined;
+  private capturedData: string[] = [];
   private video!: HTMLVideoElement;
   private canvas!: HTMLCanvasElement;
   private canvasContext!: CanvasRenderingContext2D;
-  output: string =
-    '🎥 Unable to access video stream (please make sure you have a webcam enabled)';
 
   constructor(private elementRef: ElementRef) {}
 
   ngAfterViewInit(): void {
     this.initializeCamera();
+    this.setupMotionDetection();
   }
 
   ngOnDestroy(): void {
@@ -41,6 +45,19 @@ export class CaptureComponent implements AfterViewInit {
   @HostListener('window:resize', ['$event'])
   onResize(event: Event): void {
     this.calculateAspectRatio();
+  }
+
+  private setupMotionDetection(): void {
+    if (window.DeviceMotionEvent) {
+      window.addEventListener('devicemotion', this.handleMotion.bind(this));
+    } else {
+      this.output =
+        'Device is unable to detect motion, please take pictures instead';
+    }
+  }
+
+  private handleMotion(event: DeviceMotionEvent): void {
+    this.motionData = event;
   }
 
   calculateAspectRatio(): void {
@@ -154,3 +171,19 @@ export class CaptureComponent implements AfterViewInit {
     requestAnimationFrame(() => this.tick());
   }
 }
+
+interface DetectedQRCode {
+  data: string;
+  location: {
+    topLeftCorner: Point;
+    topRightCorner: Point;
+    bottomRightCorner: Point;
+    bottomLeftCorner: Point;
+  };
+}
+
+// Possible QRs
+// 1. front/back movement
+// 2. Turning
+// 3. If
+// 4. Loops

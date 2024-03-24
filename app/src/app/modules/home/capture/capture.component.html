@@ -9,3 +9,30 @@
 <div class="output-container">
   {{ output }}
 </div>
+
+<div class="motion-data">
+  <div class="motion-data-row">
+    Acceleration:
+    {{ motionData?.acceleration?.x }}, {{ motionData?.acceleration?.y }},
+    {{ motionData?.acceleration?.z }}
+  </div>
+
+  <div class="motion-data-row">
+    Acceleration including gravity:
+    {{ motionData?.accelerationIncludingGravity?.x }},
+    {{ motionData?.accelerationIncludingGravity?.y }},
+    {{ motionData?.accelerationIncludingGravity?.z }}
+  </div>
+
+  <div class="motion-data-row">
+    Rotation rate:
+    {{ motionData?.rotationRate?.alpha }}, {{ motionData?.rotationRate?.beta }},
+    {{ motionData?.rotationRate?.gamma }}
+  </div>
+
+  <div class="motion-data-row">
+    Interval:
+    {{ motionData?.interval }},
+    {{ motionData?.timeStamp }}
+  </div>
+</div>
