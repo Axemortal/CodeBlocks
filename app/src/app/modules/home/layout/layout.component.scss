@@ -10,10 +10,12 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  max-height: 95vh;
   min-height: 50vh;
   width: 95%;
   background-color: white;
   border-radius: 8px;
+  padding: 10px;
 
   > div {
     display: flex;
@@ -34,5 +36,9 @@
       text-align: center;
       overflow-wrap: break-word;
     }
+  }
+
+  .btn {
+    margin: 10px 0;
   }
 }

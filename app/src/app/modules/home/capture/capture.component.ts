@@ -1,4 +1,11 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  Host,
+  HostListener,
+  ViewChild,
+} from '@angular/core';
 
 import jsQR, { QRCode } from 'jsqr';
 import { Point } from 'jsqr/dist/locator';
@@ -12,13 +19,16 @@ export class CaptureComponent implements AfterViewInit {
   @ViewChild('canvasElement', { static: false })
   canvasElement!: ElementRef<HTMLCanvasElement>;
 
+  aspectRatio: number | undefined;
+  videoContainerWidth: string | undefined;
+  videoContainerHeight: string | undefined;
   private video!: HTMLVideoElement;
   private canvas!: HTMLCanvasElement;
   private canvasContext!: CanvasRenderingContext2D;
   output: string =
     '🎥 Unable to access video stream (please make sure you have a webcam enabled)';
 
-  constructor() {}
+  constructor(private elementRef: ElementRef) {}
 
   ngAfterViewInit(): void {
     this.initializeCamera();
@@ -26,6 +36,32 @@ export class CaptureComponent implements AfterViewInit {
 
   ngOnDestroy(): void {
     this.stopCamera();
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: Event): void {
+    this.calculateAspectRatio();
+  }
+
+  calculateAspectRatio(): void {
+    const componentWidth = this.elementRef.nativeElement.clientWidth;
+    const componentHeight = this.elementRef.nativeElement.clientHeight;
+
+    const componentAspectRatio = componentWidth / componentHeight;
+
+    if (!this.aspectRatio) {
+      return;
+    }
+
+    if (componentAspectRatio < this.aspectRatio) {
+      this.videoContainerWidth = componentWidth + 'px';
+      this.videoContainerHeight =
+        (componentWidth / this.aspectRatio).toString() + 'px';
+    } else {
+      this.videoContainerHeight = componentHeight + 'px';
+      this.videoContainerWidth =
+        (componentHeight * this.aspectRatio).toString() + 'px';
+    }
   }
 
   private initializeCamera(): void {
@@ -42,6 +78,8 @@ export class CaptureComponent implements AfterViewInit {
     navigator.mediaDevices
       .getUserMedia(mediaConstraints)
       .then((stream) => {
+        this.aspectRatio = stream.getVideoTracks()[0].getSettings().aspectRatio;
+        this.calculateAspectRatio();
         this.video.srcObject = stream;
         this.video.setAttribute('playsinline', 'true'); // required to tell iOS safari we don't want fullscreen
         this.video.play();
