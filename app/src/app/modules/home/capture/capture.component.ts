@@ -2,7 +2,6 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
-  Host,
   HostListener,
   ViewChild,
 } from '@angular/core';
@@ -25,8 +24,10 @@ export class CaptureComponent implements AfterViewInit {
     '🎥 Unable to access video stream (please make sure you have a webcam enabled)';
 
   private aspectRatio: number | undefined;
+  private position: { x: number; y: number } = { x: 0, y: 0 };
+  velocity: { x: number; y: number; z: number } = { x: 0, y: 0, z: 0 };
   motionData: DeviceMotionEvent | undefined;
-  private capturedData: string[] = [];
+  private capturedData: DetectedQRCode[] = [];
   private video!: HTMLVideoElement;
   private canvas!: HTMLCanvasElement;
   private canvasContext!: CanvasRenderingContext2D;
@@ -57,6 +58,30 @@ export class CaptureComponent implements AfterViewInit {
   }
 
   private handleMotion(event: DeviceMotionEvent): void {
+    // Skip velocity calculation for the first motion event
+    if (!this.motionData) {
+      this.motionData = event;
+      return;
+    }
+
+    const previousAcceleration = this.motionData.acceleration;
+    const previousTimestamp = this.motionData.timeStamp;
+
+    const currentAcceleration = event.acceleration;
+    const currentTimestamp = event.timeStamp;
+
+    const dt = (currentTimestamp - previousTimestamp) / 1000; // Convert to seconds
+
+    const averageAcceleration = {
+      x: ((currentAcceleration?.x ?? 0) + (previousAcceleration?.x ?? 0)) / 2,
+      y: ((currentAcceleration?.y ?? 0) + (previousAcceleration?.y ?? 0)) / 2,
+      z: ((currentAcceleration?.z ?? 0) + (previousAcceleration?.z ?? 0)) / 2,
+    };
+
+    this.velocity.x += averageAcceleration.x * dt;
+    this.velocity.y += averageAcceleration.y * dt;
+    this.velocity.z += averageAcceleration.z * dt;
+
     this.motionData = event;
   }
 
@@ -163,12 +188,22 @@ export class CaptureComponent implements AfterViewInit {
       if (code) {
         console.log(code);
         this.drawQRCodeBorders(code);
-        this.output = code.data;
+        if (!this.checkForRepeatedQRCode(code)) {
+          this.capturedData.push(code);
+        }
+      }
+
+      if (this.capturedData.length > 0) {
+        this.output = '📸 Captured data: ' + this.capturedData.join(', ');
       } else {
         this.output = '🔍 No QR code found';
       }
     }
     requestAnimationFrame(() => this.tick());
+  }
+
+  private checkForRepeatedQRCode(QRCode: DetectedQRCode): boolean {
+    return false;
   }
 }
 
@@ -182,8 +217,11 @@ interface DetectedQRCode {
   };
 }
 
-// Possible QRs
-// 1. front/back movement
-// 2. Turning
-// 3. If
-// 4. Loops
+enum BlockQRCode {
+  MOVE_FRONT,
+  MOVE_BACK,
+  TURN_LEFT,
+  TURN_RIGHT,
+  IF,
+  WHILE,
+}
