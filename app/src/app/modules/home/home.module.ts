@@ -6,7 +6,6 @@ import { LandingComponent } from './landing/landing.component';
 import { BlocklyComponent } from './blockly/blockly.component';
 import { WelcomeComponent } from './welcome/welcome.component';
 
-
 @NgModule({
   declarations: [
     LayoutComponent,
@@ -15,8 +14,6 @@ import { WelcomeComponent } from './welcome/welcome.component';
     BlocklyComponent,
     WelcomeComponent,
   ],
-  imports: [
-    CommonModule
-  ]
+  imports: [CommonModule],
 })
-export class HomeModule { }
+export class HomeModule {}

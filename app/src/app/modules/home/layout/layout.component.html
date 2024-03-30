@@ -1,4 +1,4 @@
-<div class="container" style="max-height: 100%; max-width: 100%;">
+<div class="container" style="max-height: 100%; max-width: 100%">
   <div class="box">
     <app-landing></app-landing>
   </div>
@@ -16,13 +16,12 @@
 
       <ng-template #notSupported>
         <div class="not-supported">
-          Your device does not support taking of images! Either upload an image or
-          change your device to a supported one.
+          Your device does not support taking of images! Either upload an image
+          or change your device to a supported one.
         </div>
       </ng-template>
+    </div>
   </div>
-  
-</div>
   <ng-template #appCapture>
     <app-capture></app-capture>
     <button class="btn" (click)="onOffCamera()">Stop Recording</button>
