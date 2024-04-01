@@ -1,0 +1,21 @@
+FROM node:21-slim
+
+WORKDIR /app
+
+COPY package.json .
+COPY package-lock.json .
+RUN npm ci
+
+COPY . .
+
+# Build the Angular application
+RUN npm run build
+
+# Expose port specified by $PORT environment variable
+EXPOSE $PORT
+
+# Set the PORT environment variable for lite-server
+ENV PORT $PORT
+
+# Start lite-server
+CMD ["npx", "lite-server", "--baseDir", "dist/app/browser", "--port", "$PORT"]

@@ -16,9 +16,8 @@ app.include_router(scanner_router)
 
 # List of allowed origins
 allowed_origins = [
+    "http://localhost:3000",  # Allow the Lite Server deploying the frontend in the container
     "http://localhost:4200",  # Allow the Angular Development Server
-    # Update this to your production frontend URL if necessary
-    "http://your-production-frontend-url.com"
 ]
 
 # Add CORS middleware to the FastAPI app
