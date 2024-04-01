@@ -168,7 +168,12 @@ export class CaptureComponent implements AfterViewInit {
   }
 
   private isValidCode(data: string): boolean {
-    if (data in BlockQRCode) {
+    const uuidPattern =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+    const uniqueIdentifier = data.split(':')[0];
+    const block = data.split(':')[1];
+    if (uuidPattern.test(uniqueIdentifier) && block in BlockQRCode) {
       return true;
     }
     return false;
@@ -176,21 +181,11 @@ export class CaptureComponent implements AfterViewInit {
 
   private checkForRepeatedQRCode(code: QRCode): boolean {
     for (const captured of this.capturedData) {
-      const distance = this.calculateDistance(code.location, captured.location);
-      if (distance < 10) {
+      if (captured.data === code.data) {
         return true;
       }
     }
     return false;
-  }
-
-  private calculateDistance(
-    qrOneLocation: QRCodeLocation,
-    qrTwoLocation: QRCodeLocation
-  ): number {
-    const dx = qrOneLocation.topLeftCorner.x - qrTwoLocation.topLeftCorner.x;
-    const dy = qrOneLocation.topLeftCorner.y - qrTwoLocation.topLeftCorner.y;
-    return Math.sqrt(dx * dx + dy * dy);
   }
 }
 
