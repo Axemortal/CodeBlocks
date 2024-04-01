@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-test',
@@ -24,7 +25,10 @@ export class TestComponent implements AfterViewInit {
 
         const formData = new FormData();
         formData.append('file', selectedFile);
-        fetch('http://localhost:8000/compiler/compile', {
+
+        console.log('Production API URL: ', environment.apiUrl);
+
+        fetch(`${environment.apiUrl}/compiler/compile`, {
           method: 'POST',
           body: formData,
         })
