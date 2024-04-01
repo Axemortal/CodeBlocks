@@ -1,6 +1,8 @@
 <div class="container">
   <div *ngIf="!isOpenCamera; else appCapture">
     <label class="btn" for="file-upload">Upload Image</label>
+    <!-- TODO: Remove in the future -->
+    <app-test></app-test>
     <input id="file-upload" type="file" />
     <button
       *ngIf="isSupported; else notSupported"

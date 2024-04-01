@@ -3,13 +3,15 @@ import { CommonModule } from '@angular/common';
 import { LayoutComponent } from './layout/layout.component';
 import { CaptureComponent } from './capture/capture.component';
 import { MotionDetectorComponent } from './motion-detector/motion-detector.component';
+import { TestComponent } from './test/test.component';
 
 
 @NgModule({
   declarations: [
     LayoutComponent,
     CaptureComponent,
-    MotionDetectorComponent
+    MotionDetectorComponent,
+    TestComponent
   ],
   imports: [
     CommonModule
