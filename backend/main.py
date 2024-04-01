@@ -1,0 +1,47 @@
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
+import uvicorn
+
+from logger import logger
+
+from compiler.router import router as compiler_router
+from scanner.router import router as scanner_router
+
+app = FastAPI()
+app.title = "CodeBlocks API"
+app.version = "0.0.1"
+
+app.include_router(compiler_router)
+app.include_router(scanner_router)
+
+# List of allowed origins
+allowed_origins = [
+    "http://localhost:4200",  # Allow the Angular Development Server
+    # Update this to your production frontend URL if necessary
+    "http://your-production-frontend-url.com"
+]
+
+# Add CORS middleware to the FastAPI app
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=allowed_origins,  # Allows specified origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
+
+
+# Middleware to log incoming requests
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    logger.info(f"Request: {request.method} {request.url}")
+    response = await call_next(request)
+    return response
+
+
+@app.get("/")
+async def route_to_documentation():
+    raise HTTPException(status_code=307, headers={"Location": "/docs"})
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="127.0.0.1",  port=8000, reload=True)
