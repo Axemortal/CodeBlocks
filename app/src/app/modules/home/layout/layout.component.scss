@@ -1,6 +1,7 @@
 :host {
   display: flex;
   justify-content: center;
+  align-items: center;
   height: 100vh;
 }
 
@@ -14,7 +15,7 @@
   width: 85vw;
   border-radius: 8px;
   padding: 10px;
-  height: fit-content;
+  height: 100vh;
   //background-color: rgb(255 255 255 / 75%);
   margin: auto;
 
@@ -49,14 +50,36 @@
   }
 
   .text {
+    color: #5E1675;
+  }
+
+  .title{
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    font-size: 58px;
+    text-align: center;
+    padding: 20px;
+  }
+
+  .instruction {
     font-family: "Luckiest Guy", cursive;
     font-weight: 400;
     font-style: normal;
-    font-size: 34px;
+    font-size: 45px;
     text-align: center;
-    line-height: 5px;
-    padding: 10px;
-    color: #5E1675;
+    padding: 20px;
+    color: whitesmoke;
+    height: 100%;
+  }
+
+  .instructionBox{
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    background-color:#EE4266;
+    height: 30vh;
+    border-radius: 15px;
+    box-shadow: 0px 10px 30px #f5587aac;
+    margin: auto;
   }
 
   .flash{

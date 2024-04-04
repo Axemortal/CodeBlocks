@@ -28,3 +28,15 @@
     box-shadow: rgba(80, 63, 205, 0.5) 0 1px 30px;
   }
 }
+
+  @import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap');
+
+  .text {
+    font-family: "Luckiest Guy", cursive;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 34px;
+    text-align: center;
+    line-height: 5px;
+    padding: 10px;
+  }

@@ -1,14 +1,24 @@
-<div class="container" style="max-height: 100%; max-width: 100%">
+<div class="container">
   <div class="box">
-    <app-landing></app-landing>
+    <div>
+      <h1 class="title">CODEbLOCKS</h1>
+      <app-welcome></app-welcome>
+      <!-- <img
+        src="https://miro.medium.com/v2/resize:fit:1400/1*AXeDnas9yHNP-GfOECv9_g.png"
+        width="200"
+      /> -->
+      <div class="instructionBox">
+        <h1 class="instruction ">Use the blocks to make the robot move!</h1>
+      </div>
+    </div>
   </div>
   <div class="container">
     <div *ngIf="!isOpenCamera; else appCapture">
-      <button class="btn text" for="file-upload">Upload Image</button>
+      <button class="btn text textbox" for="file-upload">Upload Image</button>
       <input id="file-upload" type="file" />
       <button
         *ngIf="isSupported; else notSupported"
-        class="btn text flash"
+        class="btn text textbox flash"
         (click)="openCamera()"
       >
         Start Recording
