@@ -8,7 +8,7 @@
         width="200"
       /> -->
       <div class="instructionBox">
-        <h1 class="instruction ">Use the blocks to make the robot move!</h1>
+        <h1 class="instruction">Use the blocks to make the robot move!</h1>
       </div>
     </div>
   </div>
@@ -16,6 +16,8 @@
     <div *ngIf="!isOpenCamera; else appCapture">
       <button class="btn text textbox" for="file-upload">Upload Image</button>
       <input id="file-upload" type="file" />
+      <!-- TODO: Remove in the future -->
+      <app-test></app-test>
       <button
         *ngIf="isSupported; else notSupported"
         class="btn text textbox flash"

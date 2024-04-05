@@ -4,6 +4,8 @@ import { LayoutComponent } from './layout/layout.component';
 import { CaptureComponent } from './capture/capture.component';
 import { BlocklyComponent } from './blockly/blockly.component';
 import { WelcomeComponent } from './welcome/welcome.component';
+import { MotionDetectorComponent } from './motion-detector/motion-detector.component';
+import { TestComponent } from './test/test.component';
 
 @NgModule({
   declarations: [
@@ -11,6 +13,8 @@ import { WelcomeComponent } from './welcome/welcome.component';
     CaptureComponent,
     BlocklyComponent,
     WelcomeComponent,
+    MotionDetectorComponent,
+    TestComponent,
   ],
   imports: [CommonModule],
 })

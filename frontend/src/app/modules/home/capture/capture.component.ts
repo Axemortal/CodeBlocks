@@ -24,11 +24,6 @@ export class CaptureComponent implements AfterViewInit {
     '🎥 Unable to access video stream (please make sure you have a webcam enabled)';
 
   private aspectRatio: number | undefined;
-  private focalLength = 1; // TODO: Find the focal length of the camera
-  position: { x: number; y: number; z: number } = { x: 0, y: 0, z: 0 };
-  velocity: { x: number; y: number; z: number } = { x: 0, y: 0, z: 0 };
-  depth: number = 0;
-  motionData: DeviceMotionEvent | undefined;
   private capturedData: QRCode[] = [];
   private video!: HTMLVideoElement;
   private canvas!: HTMLCanvasElement;
@@ -38,7 +33,7 @@ export class CaptureComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.initializeCamera();
-    this.setupMotionDetection();
+    // TODO: Add motion detection for more accurate QR code detection
   }
 
   ngOnDestroy(): void {
@@ -48,68 +43,6 @@ export class CaptureComponent implements AfterViewInit {
   @HostListener('window:resize', ['$event'])
   onResize(event: Event): void {
     this.calculateAspectRatio();
-  }
-
-  private setupMotionDetection(): void {
-    if (window.DeviceMotionEvent) {
-      window.addEventListener('devicemotion', this.handleMotion.bind(this));
-    } else {
-      this.output =
-        'Device is unable to detect motion, please take pictures instead';
-    }
-  }
-
-  private handleMotion(event: DeviceMotionEvent): void {
-    // Skip velocity calculation for the first motion event
-    if (!this.motionData) {
-      this.motionData = event;
-      return;
-    }
-
-    const previousAcceleration = this.motionData.acceleration;
-    const previousTimestamp = this.motionData.timeStamp;
-
-    const currentAcceleration = event.acceleration;
-    const currentTimestamp = event.timeStamp;
-
-    const dt = (currentTimestamp - previousTimestamp) / 1000; // Convert to seconds
-
-    const averageAcceleration = {
-      x: ((currentAcceleration?.x ?? 0) + (previousAcceleration?.x ?? 0)) / 2,
-      y: ((currentAcceleration?.y ?? 0) + (previousAcceleration?.y ?? 0)) / 2,
-      z: ((currentAcceleration?.z ?? 0) + (previousAcceleration?.z ?? 0)) / 2,
-    };
-
-    const dampingFactor = 0.98;
-
-    const previousVelocity = this.velocity;
-    this.velocity.x =
-      this.velocity.x * dampingFactor + averageAcceleration.x * dt;
-    this.velocity.y =
-      this.velocity.y * dampingFactor + averageAcceleration.y * dt;
-    this.velocity.z =
-      this.velocity.z * dampingFactor + averageAcceleration.z * dt;
-
-    this.motionData = event;
-
-    // Skip position calculation for the first two motion events
-    if (
-      previousVelocity.x === 0 &&
-      previousVelocity.y === 0 &&
-      previousVelocity.z === 0
-    ) {
-      return;
-    }
-
-    const averageVelocity = {
-      x: (this.velocity.x + previousVelocity.x) / 2,
-      y: (this.velocity.y + previousVelocity.y) / 2,
-      z: (this.velocity.z + previousVelocity.z) / 2,
-    };
-
-    this.position.x += averageVelocity.x * dt;
-    this.position.y += averageVelocity.y * dt;
-    this.position.z += averageVelocity.z * dt;
   }
 
   calculateAspectRatio(): void {
@@ -214,12 +147,8 @@ export class CaptureComponent implements AfterViewInit {
 
       if (code && this.isValidCode(code.data)) {
         this.drawQRCodeBorders(code);
-        let codeWithUpdatedLocation = this.modifyQRLocationData(
-          code,
-          this.depth
-        );
-        if (!this.checkForRepeatedQRCode(codeWithUpdatedLocation)) {
-          this.capturedData.push(codeWithUpdatedLocation);
+        if (!this.checkForRepeatedQRCode(code)) {
+          this.capturedData.push(code);
         }
       }
 
@@ -239,46 +168,24 @@ export class CaptureComponent implements AfterViewInit {
   }
 
   private isValidCode(data: string): boolean {
-    if (data in BlockQRCode) {
+    const uuidPattern =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+    const uniqueIdentifier = data.split(':')[0];
+    const block = data.split(':')[1];
+    if (uuidPattern.test(uniqueIdentifier) && block in BlockQRCode) {
       return true;
     }
     return false;
   }
 
-  private modifyQRLocationData(code: QRCode, depth: number): QRCode {
-    const xTranslation = (depth / this.focalLength) * this.position.x;
-    const yTranslation = (depth / this.focalLength) * this.position.y;
-
-    const updateLocation = (point: Point) => {
-      point.x += xTranslation;
-      point.y += yTranslation;
-    };
-
-    updateLocation(code.location.topRightCorner);
-    updateLocation(code.location.bottomRightCorner);
-    updateLocation(code.location.bottomLeftCorner);
-    updateLocation(code.location.topLeftCorner);
-
-    return code;
-  }
-
   private checkForRepeatedQRCode(code: QRCode): boolean {
     for (const captured of this.capturedData) {
-      const distance = this.calculateDistance(code.location, captured.location);
-      if (distance < 10) {
+      if (captured.data === code.data) {
         return true;
       }
     }
     return false;
-  }
-
-  private calculateDistance(
-    qrOneLocation: QRCodeLocation,
-    qrTwoLocation: QRCodeLocation
-  ): number {
-    const dx = qrOneLocation.topLeftCorner.x - qrTwoLocation.topLeftCorner.x;
-    const dy = qrOneLocation.topLeftCorner.y - qrTwoLocation.topLeftCorner.y;
-    return Math.sqrt(dx * dx + dy * dy);
   }
 }
 
