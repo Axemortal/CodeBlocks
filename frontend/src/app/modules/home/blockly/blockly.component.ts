@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 
 import * as Blockly from 'blockly';
 import { BlocklyOptions } from 'blockly';
@@ -6,14 +6,13 @@ import { BlocklyOptions } from 'blockly';
 @Component({
   selector: 'app-blockly',
   templateUrl: './blockly.component.html',
-  styleUrls: ['./blockly.component.scss']
+  styleUrls: ['./blockly.component.scss'],
 })
-export class BlocklyComponent implements OnInit {
+export class BlocklyComponent implements AfterViewInit {
+  @ViewChild('blocklyDiv') blocklyDiv!: ElementRef;
+  constructor() {}
 
-  constructor() { }
-
-  ngOnInit() {
-    const blocklyDiv = document.getElementById('blocklyDiv');
+  ngAfterViewInit() {
     const toolbox = {
       kind: 'flyoutToolbox',
       contents: [
@@ -74,39 +73,27 @@ export class BlocklyComponent implements OnInit {
                 fields: {
                   VAR: {
                     name: 'text',
-                  }
+                  },
                 },
               },
             },
           },
-        }
-      ]
+        },
+      ],
     };
 
-    if (blocklyDiv){
-      Blockly.inject(blocklyDiv, {
-      readOnly: false,
-      media: 'media/',
-      trashcan: true,
-      move: {
-        scrollbars: true,
-        drag: true,
-        wheel: true
-      },
-      toolbox
-    } as BlocklyOptions);
+    if (this.blocklyDiv) {
+      Blockly.inject(this.blocklyDiv.nativeElement, {
+        readOnly: false,
+        media: 'media/',
+        trashcan: true,
+        move: {
+          scrollbars: true,
+          drag: true,
+          wheel: true,
+        },
+        toolbox,
+      } as BlocklyOptions);
     }
   }
 }
-
-
-// import { Component } from '@angular/core';
-
-// @Component({
-//   selector: 'app-blockly',
-//   templateUrl: './blockly.component.html',
-//   styleUrl: './blockly.component.scss'
-// })
-// export class BlocklyComponent {
-
-// }
