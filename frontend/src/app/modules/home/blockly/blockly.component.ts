@@ -2,6 +2,8 @@ import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 
 import * as Blockly from 'blockly';
 import { BlocklyOptions } from 'blockly';
+import { colour } from 'blockly/blocks';
+import { setColour } from 'blockly/core/dropdowndiv';
 
 @Component({
   selector: 'app-blockly',
@@ -19,6 +21,7 @@ export class BlocklyComponent implements AfterViewInit {
         {
           kind: 'block',
           type: 'controls_ifelse',
+          setColour: 135
         },
         {
           kind: 'block',
