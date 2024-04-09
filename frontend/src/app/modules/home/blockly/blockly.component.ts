@@ -21,7 +21,6 @@ export class BlocklyComponent implements AfterViewInit {
         {
           kind: 'block',
           type: 'controls_ifelse',
-          setColour: 135
         },
         {
           kind: 'block',
