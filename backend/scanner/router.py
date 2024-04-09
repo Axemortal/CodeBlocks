@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, File, UploadFile
+from fastapi.responses import JSONResponse
 
 router = APIRouter(
     tags=['Scanner'],
@@ -6,6 +7,10 @@ router = APIRouter(
 )
 
 
-@router.get('/')
-def get_scanner():
-    return {"scanner": "scanner"}
+@router.post("/scan")
+async def scan_code(videoFrame: UploadFile = File(...)):
+    contents = await videoFrame.read()
+    # Aidan add functions under dependencies that handles the parsing of the videoframe
+    print(
+        f"Received file: {videoFrame.filename}, size: {len(contents)} bytes")
+    return JSONResponse({"message": "Video stream uploaded successfully"})

@@ -6,6 +6,7 @@ import { BlocklyComponent } from './blockly/blockly.component';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { MotionDetectorComponent } from './motion-detector/motion-detector.component';
 import { TestComponent } from './test/test.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -16,6 +17,6 @@ import { TestComponent } from './test/test.component';
     MotionDetectorComponent,
     TestComponent,
   ],
-  imports: [CommonModule],
+  imports: [CommonModule, HttpClientModule],
 })
 export class HomeModule {}

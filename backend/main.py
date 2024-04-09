@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 import uvicorn
 
 from logger import logger
@@ -38,6 +39,11 @@ async def log_requests(request: Request, call_next):
     logger.info(f"Request: {request.method} {request.url}")
     response = await call_next(request)
     return response
+
+
+@app.get("/health")
+async def health_check():
+    return JSONResponse(content={"status": "ok"})
 
 
 @app.get("/")
