@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import {
   AfterViewInit,
   Component,
@@ -28,8 +29,9 @@ export class CaptureComponent implements AfterViewInit {
   private video!: HTMLVideoElement;
   private canvas!: HTMLCanvasElement;
   private canvasContext!: CanvasRenderingContext2D;
+  private framesSinceLastSend = 0;
 
-  constructor(private elementRef: ElementRef) {}
+  constructor(private elementRef: ElementRef, private http: HttpClient) {}
 
   ngAfterViewInit(): void {
     this.initializeCamera();
@@ -141,6 +143,8 @@ export class CaptureComponent implements AfterViewInit {
         this.canvas.height
       );
 
+      this.sendVideoFrameToBackend(imageData);
+
       const code = jsQR(imageData.data, imageData.width, imageData.height, {
         inversionAttempts: 'dontInvert',
       });
@@ -186,6 +190,32 @@ export class CaptureComponent implements AfterViewInit {
       }
     }
     return false;
+  }
+
+  private sendVideoFrameToBackend(videoFrame: ImageData): void {
+    const samplingRate = 15;
+
+    if (this.framesSinceLastSend < samplingRate) {
+      this.framesSinceLastSend++;
+      return;
+    } else {
+      this.framesSinceLastSend = 0;
+
+      // Convert ImageData to a Blob object
+      const blob = new Blob([videoFrame.data], { type: 'image/png' });
+      const formData = new FormData();
+      formData.append('videoFrame', blob, 'videoFrame.png');
+
+      // Send the video frame to the backend
+      this.http.post('http://localhost:8000/scanner/scan', formData).subscribe(
+        (response) => {
+          console.log('Response from backend:', response);
+        },
+        (error) => {
+          console.error('Error sending video frame to backend:', error);
+        }
+      );
+    }
   }
 }
 

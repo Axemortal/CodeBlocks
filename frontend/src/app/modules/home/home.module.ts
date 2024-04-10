@@ -4,6 +4,7 @@ import { LayoutComponent } from './layout/layout.component';
 import { CaptureComponent } from './capture/capture.component';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { MotionDetectorComponent } from './motion-detector/motion-detector.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -12,6 +13,6 @@ import { MotionDetectorComponent } from './motion-detector/motion-detector.compo
     WelcomeComponent,
     MotionDetectorComponent,
   ],
-  imports: [CommonModule],
+  imports: [CommonModule, HttpClientModule],
 })
 export class HomeModule {}
