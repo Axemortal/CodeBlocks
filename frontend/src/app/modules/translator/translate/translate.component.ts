@@ -2,11 +2,11 @@ import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 
 @Component({
-  selector: 'app-test',
-  templateUrl: './test.component.html',
-  styleUrl: './test.component.scss',
+  selector: 'app-translate',
+  templateUrl: './translate.component.html',
+  styleUrl: './translate.component.scss',
 })
-export class TestComponent implements AfterViewInit {
+export class TranslateComponent implements AfterViewInit {
   @ViewChild('fileInput') fileInput!: ElementRef;
 
   constructor() {}

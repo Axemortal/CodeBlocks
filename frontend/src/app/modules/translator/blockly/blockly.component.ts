@@ -2,8 +2,6 @@ import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 
 import * as Blockly from 'blockly';
 import { BlocklyOptions } from 'blockly';
-import { colour } from 'blockly/blocks';
-import { setColour } from 'blockly/core/dropdowndiv';
 
 @Component({
   selector: 'app-blockly',
@@ -14,72 +12,19 @@ export class BlocklyComponent implements AfterViewInit {
   @ViewChild('blocklyDiv') blocklyDiv!: ElementRef;
   constructor() {}
 
-  ngAfterViewInit() {
+  async ngAfterViewInit() {
+    // Read blocks.json
+    const blocks = await fetch('../../../../assets/blocks.json').then((res) =>
+      res.json()
+    );
+    Blockly.defineBlocksWithJsonArray(blocks);
+
     const toolbox = {
       kind: 'flyoutToolbox',
       contents: [
         {
           kind: 'block',
-          type: 'controls_ifelse',
-        },
-        {
-          kind: 'block',
-          type: 'logic_compare',
-        },
-        {
-          kind: 'block',
-          type: 'logic_operation',
-        },
-        {
-          kind: 'block',
-          type: 'controls_repeat_ext',
-          inputs: {
-            TIMES: {
-              shadow: {
-                type: 'math_number',
-                fields: {
-                  NUM: 10,
-                },
-              },
-            },
-          },
-        },
-        {
-          kind: 'block',
-          type: 'logic_operation',
-        },
-        {
-          kind: 'block',
-          type: 'logic_negate',
-        },
-        {
-          kind: 'block',
-          type: 'logic_boolean',
-        },
-        {
-          kind: 'block',
-          type: 'logic_null',
-          disabled: 'true',
-        },
-        {
-          kind: 'block',
-          type: 'logic_ternary',
-        },
-        {
-          kind: 'block',
-          type: 'text_charAt',
-          inputs: {
-            VALUE: {
-              block: {
-                type: 'variables_get',
-                fields: {
-                  VAR: {
-                    name: 'text',
-                  },
-                },
-              },
-            },
-          },
+          type: 'stop',
         },
       ],
     };
@@ -95,6 +40,8 @@ export class BlocklyComponent implements AfterViewInit {
           wheel: true,
         },
         toolbox,
+        horizontalLayout: true,
+        toolboxPosition: 'start',
       } as BlocklyOptions);
     }
   }

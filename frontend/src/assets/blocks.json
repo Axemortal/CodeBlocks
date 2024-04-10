@@ -1,6 +1,5 @@
-import * as Blockly from 'blockly';
-
-Blockly.defineBlocksWithJsonArray([{
+[
+  {
     "type": "move_forward",
     "message0": "Move forward",
     "previousStatement": null,
@@ -60,7 +59,7 @@ Blockly.defineBlocksWithJsonArray([{
     "args0": [
       {
         "type": "input_value",
-        "name": "NAME"
+        "name": "wait_wait"
       }
     ],
     "previousStatement": null,
@@ -75,17 +74,17 @@ Blockly.defineBlocksWithJsonArray([{
     "args0": [
       {
         "type": "input_statement",
-        "name": "NAME",
+        "name": "if_else_if",
         "align": "RIGHT"
       },
       {
         "type": "input_statement",
-        "name": "NAME",
+        "name": "if_else_do",
         "align": "RIGHT"
       },
       {
         "type": "input_statement",
-        "name": "NAME",
+        "name": "if_else_else",
         "align": "RIGHT"
       }
     ],
@@ -101,12 +100,12 @@ Blockly.defineBlocksWithJsonArray([{
     "args0": [
       {
         "type": "input_statement",
-        "name": "NAME",
+        "name": "if_if",
         "align": "RIGHT"
       },
       {
         "type": "input_statement",
-        "name": "NAME",
+        "name": "if_do",
         "align": "RIGHT"
       }
     ],
@@ -127,7 +126,7 @@ Blockly.defineBlocksWithJsonArray([{
       },
       {
         "type": "input_statement",
-        "name": "NAME",
+        "name": "repeat_repeat",
         "align": "RIGHT"
       }
     ],
@@ -146,7 +145,7 @@ Blockly.defineBlocksWithJsonArray([{
       },
       {
         "type": "input_statement",
-        "name": "NAME",
+        "name": "obstacle_do",
         "align": "RIGHT"
       }
     ],
@@ -162,7 +161,7 @@ Blockly.defineBlocksWithJsonArray([{
     "args0": [
       {
         "type": "input_statement",
-        "name": "NAME"
+        "name": "more_than_if"
       },
       {
         "type": "field_number",
@@ -174,7 +173,7 @@ Blockly.defineBlocksWithJsonArray([{
       },
       {
         "type": "input_statement",
-        "name": "NAME"
+        "name": "more_than_then"
       }
     ],
     "previousStatement": null,
@@ -188,7 +187,7 @@ Blockly.defineBlocksWithJsonArray([{
     "args0": [
       {
         "type": "input_statement",
-        "name": "NAME"
+        "name": "less_than_if"
       },
       {
         "type": "field_number",
@@ -200,7 +199,7 @@ Blockly.defineBlocksWithJsonArray([{
       },
       {
         "type": "input_statement",
-        "name": "NAME"
+        "name": "less_than_then"
       }
     ],
     "previousStatement": null,
@@ -215,7 +214,7 @@ Blockly.defineBlocksWithJsonArray([{
     "args0": [
       {
         "type": "input_statement",
-        "name": "NAME"
+        "name": "equals_to_if"
       },
       {
         "type": "field_number",
@@ -227,7 +226,7 @@ Blockly.defineBlocksWithJsonArray([{
       },
       {
         "type": "input_statement",
-        "name": "NAME"
+        "name": "equals_to_then"
       }
     ],
     "previousStatement": null,
@@ -245,7 +244,7 @@ Blockly.defineBlocksWithJsonArray([{
       },
       {
         "type": "input_statement",
-        "name": "NAME",
+        "name": "clap_do",
         "align": "RIGHT"
       }
     ],
@@ -254,7 +253,5 @@ Blockly.defineBlocksWithJsonArray([{
     "colour": 300,
     "tooltip": "",
     "helpUrl": ""
-  }])
-
-
-  //insert block logic here
+  }
+]
