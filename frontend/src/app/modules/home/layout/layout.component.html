@@ -2,7 +2,7 @@
   <div *ngIf="!isOpenCamera; else appCapture">
     <div class="box">
       <div>
-        <h1 class="title">CODEbLOCKS</h1>
+        <h1 class="title">CODEBLOCKS</h1>
         <app-welcome></app-welcome>
         <!-- <img
           src="https://miro.medium.com/v2/resize:fit:1400/1*AXeDnas9yHNP-GfOECv9_g.png"
@@ -13,13 +13,9 @@
         </div>
       </div>
     </div>
-    <div class="container" style="padding-top: 20%;">
-
+    <div class="container" style="padding-top: 20%">
       <!-- <button class="btn text textbox" for="file-upload">Upload Image</button>
       <input id="file-upload" type="file" /> -->
-      <!-- TODO: Remove in the future -->
-      <!-- <app-test></app-test> -->
-      <app-blockly></app-blockly>
       <button
         *ngIf="isSupported; else notSupported"
         class="btn text textbox"
@@ -29,21 +25,19 @@
       </button>
     </div>
 
-
-  
-      <ng-template #notSupported>
-        <div class="not-supported">
-          Your device does not support taking of images! Either upload an image
-          or change your device to a supported one.
-        </div>
-      </ng-template>
-</div>
+    <ng-template #notSupported>
+      <div class="not-supported">
+        Your device does not support taking of images! Either upload an image or
+        change your device to a supported one.
+      </div>
+    </ng-template>
+  </div>
   <ng-template #appCapture>
     <div class="captureContainer">
       <app-capture></app-capture>
-      <button class="btn text textbox" (click)="onOffCamera()">Stop Recording</button>
+      <button class="btn text textbox" (click)="onOffCamera()">
+        Stop Recording
+      </button>
     </div>
-
   </ng-template>
-
-  </div>
+</div>
