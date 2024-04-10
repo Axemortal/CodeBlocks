@@ -1,1 +1,26 @@
 <app-blockly></app-blockly> <app-translate></app-translate>
+<button class="btn exitBtn text smallText" (click)="endRun()">exit</button>
+<div class="container">
+  <div class="box">
+    <div class="contentContainer">
+      <h1>blockly visual here</h1>
+      <!-- blockly visual -->
+    </div>
+    <button class="btn text smallText" (click)="startEditBlocks()">
+      edit blocks
+    </button>
+  </div>
+  <div *ngIf="!isEditBlocks; else editBlocks">
+    <div class="contentContainer">
+      <h1>generated code here</h1>
+      <!-- code -->
+    </div>
+    <button class="btn bigBtn text bigText" (click)="startRunning()">
+      run code
+    </button>
+  </div>
+
+  <ng-template #editBlocks>
+    <!-- full blockly interface -->
+  </ng-template>
+</div>

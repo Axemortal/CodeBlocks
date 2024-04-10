@@ -1,5 +1,6 @@
 import { isPlatformBrowser } from '@angular/common';
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-layout',
@@ -10,7 +11,10 @@ export class LayoutComponent implements OnInit {
   isSupported = false;
   isOpenCamera = false;
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
@@ -24,5 +28,10 @@ export class LayoutComponent implements OnInit {
 
   onOffCamera() {
     this.isOpenCamera = false;
+  }
+
+  goToRun() {
+    // Route to translator page
+    this.router.navigate(['/translator']);
   }
 }
