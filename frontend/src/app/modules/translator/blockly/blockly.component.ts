@@ -20,11 +20,88 @@ export class BlocklyComponent implements AfterViewInit {
     Blockly.defineBlocksWithJsonArray(blocks);
 
     const toolbox = {
-      kind: 'flyoutToolbox',
+      kind: 'categoryToolbox',
       contents: [
         {
-          kind: 'block',
-          type: 'stop',
+          kind: 'category',
+          name: 'Actions',
+          colour: '#5C81A6',
+          contents: [
+            {
+              kind: 'block',
+              type: 'move_forward',
+            },
+            {
+              kind: 'block',
+              type: 'move_backward',
+            },
+            {
+              kind: 'block',
+              type: 'turn_left',
+            },
+            {
+              kind: 'block',
+              type: 'turn_right',
+            },
+            {
+              kind: 'block',
+              type: 'stop',
+            },
+            {
+              kind: 'block',
+              type: 'quack',
+            },
+            {
+              kind: 'block',
+              type: 'wait',
+            },
+          ],
+        },
+        {
+          kind: 'category',
+          name: 'Controls',
+          colour: '#5CA65C',
+          contents: [
+            {
+              kind: 'block',
+              type: 'if_else',
+            },
+            {
+              kind: 'block',
+              type: 'if',
+            },
+            {
+              kind: 'block',
+              type: 'repeat',
+            },
+          ],
+        },
+        {
+          kind: 'category',
+          name: 'Conditions',
+          colour: '#A65C5C',
+          contents: [
+            {
+              kind: 'block',
+              type: 'obstacle',
+            },
+            {
+              kind: 'block',
+              type: 'more_than',
+            },
+            {
+              kind: 'block',
+              type: 'less_than',
+            },
+            {
+              kind: 'block',
+              type: 'equals_to',
+            },
+            {
+              kind: 'block',
+              type: 'clap',
+            },
+          ],
         },
       ],
     };
