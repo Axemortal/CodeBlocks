@@ -1,15 +1,14 @@
 :host {
-  height: 50vh;
+  display: block;
+  min-height: 50vh;
   width: 100%;
-  align-self: center;
-  justify-content: center;
-  padding-top: 20%;
 }
 
 .video-container {
   position: relative;
   overflow: hidden;
-  margin: 0 auto;
+  margin: 20px auto;
+  border-radius: 10px;
 
   canvas {
     position: absolute;
@@ -22,4 +21,5 @@
 
 .output-container {
   margin: 10px 0;
+  padding: 10px;
 }

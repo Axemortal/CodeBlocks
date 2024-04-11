@@ -1,20 +1,13 @@
 <div class="container">
   <div *ngIf="!isOpenCamera; else appCapture">
-    <!-- <div class="box"> -->
-    <div>
-      <h1 class="title">CODEBLOCKS</h1>
-      <app-welcome></app-welcome>
-      <div class="instructionBox">
-        <h1 class="instruction">Use the blocks to make the robot move!</h1>
-      </div>
-    </div>
-    <!-- </div> -->
-    <div class="container" style="padding-top: 20%">
-      <!-- <button class="btn text textbox" for="file-upload">Upload Image</button>
+    <app-welcome></app-welcome>
+
+    <div class="action-container">
+      <!-- <button class="btn text" for="file-upload">Upload Image</button>
       <input id="file-upload" type="file" /> -->
       <button
         *ngIf="isSupported; else notSupported"
-        class="btn text textbox"
+        class="btn text"
         (click)="openCamera()"
       >
         Start Recording
@@ -30,15 +23,12 @@
   </div>
 
   <ng-template #appCapture>
-    <div class="captureContainer">
+    <div class="capture-container">
       <app-capture></app-capture>
-      <button class="btn text textbox" (click)="onOffCamera()">
-        Stop Recording
-      </button>
-
-      <button class="btn text textbox" (click)="goToRun()">
-        Finish Recording
-      </button>
+      <div class="action-container">
+        <button class="btn text" (click)="onOffCamera()">Stop Recording</button>
+        <button class="btn text" (click)="goToRun()">Finish Recording</button>
+      </div>
     </div>
   </ng-template>
 </div>

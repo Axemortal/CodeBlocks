@@ -35,7 +35,6 @@ export class CaptureComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.initializeCamera();
-    // TODO: Add motion detection for more accurate QR code detection
   }
 
   ngOnDestroy(): void {
