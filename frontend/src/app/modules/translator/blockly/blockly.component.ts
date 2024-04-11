@@ -122,4 +122,19 @@ export class BlocklyComponent implements AfterViewInit {
       } as BlocklyOptions);
     }
   }
+
+  saveContext() {
+    const workspace = Blockly.getMainWorkspace();
+    const state = Blockly.serialization.workspaces.save(workspace);
+    localStorage.setItem('blocklyWorkspace', JSON.stringify(state));
+    Blockly.getMainWorkspace().clear();
+  }
+
+  loadSavedContext() {
+    const workspace = Blockly.getMainWorkspace();
+    const savedState = JSON.parse(
+      localStorage.getItem('blocklyWorkspace') ?? '{}'
+    );
+    Blockly.serialization.workspaces.load(savedState, workspace);
+  }
 }

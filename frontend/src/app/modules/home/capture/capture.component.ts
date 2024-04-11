@@ -70,7 +70,7 @@ export class CaptureComponent implements AfterViewInit {
   private initializeCamera(): void {
     this.video = document.createElement('video');
     this.canvas = this.canvasElement.nativeElement;
-    const context = this.canvas.getContext('2d');
+    const context = this.canvas.getContext('2d', { willReadFrequently: true });
     if (!context) {
       throw new Error('Canvas context not found');
     }
@@ -192,7 +192,7 @@ export class CaptureComponent implements AfterViewInit {
   }
 
   private sendVideoFrameToBackend(videoFrame: ImageData): void {
-    const samplingRate = 15;
+    const samplingRate = 100;
 
     if (this.framesSinceLastSend < samplingRate) {
       this.framesSinceLastSend++;
