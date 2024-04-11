@@ -1,75 +1,63 @@
-import cv2
 import numpy as np
-from pyzbar.pyzbar import decode
-from templates import code_templates
-import subprocess
+from scanner.templates import id_mappings
 
-filename = "script.py"
+HEIGHT_TOLERANCE = 250
 
-# Generate a code block
-# Data should be comma separated E.g. for 3 => for i in range(3):
+def get_row(y):
+    return round(y / HEIGHT_TOLERANCE)
 
+def get_qr_top_and_left(quad_xy):
+    # Calculate the average top Y coordinate (mean of the Y values of the top-left and top-right corners)
+    top = np.mean([quad_xy[0][1], quad_xy[1][1]])
+    # Calculate the average left X coordinate (mean of the X values of the top-left and bottom-left corners)
+    left = np.mean([quad_xy[0][0], quad_xy[3][0]])
+    return top, left
 
-def generate_code_block(decoded_data):
-    parts = decoded_data.split(',')
-    if not parts:
-        return None
+# Analyses the X and Y values of each QR Code to determine their orders
+def analyse_spatial_arrangement(qr_data, metadata):
+    qr_codes_with_positions = []
+    for i, data in enumerate(qr_data):
+        if i < len(metadata):
+            top, left = get_qr_top_and_left(metadata[i]['quad_xy'])
+            qr_codes_with_positions.append((data, (top, left))) # Sample: ("QR Data Here", (100, 200))
+    
+    sorted_qrs = sorted(qr_codes_with_positions, key = lambda item: (get_row(item[1][0]), item[1][1]))
 
-    command = parts[0]
-    args = parts[1:]
+    function_structure = []
+    current_row = [sorted_qrs[0]] # Insert first QR Code in first row
 
-    if command in code_templates:
-        return code_templates[command](*args)
+    for item in sorted_qrs[1:]:
+        qr, (top, left) = item
+        if len(current_row) == 0:
+            current_row = [item]
+        last_qr, (last_top, last_left) = current_row[-1]
 
-    return None
+        if get_row(top) == get_row(last_top):  
+            if item in current_row:
+                continue
+            current_row.append(item)
 
+        else:
+            function_structure.append(current_row)
+            current_row = [item]
 
-def write_code(code_block, filename):
-    # Write the code block to a file
-    with open(filename, 'a') as file:
-        file.write(code_block)
+    if current_row:
+        function_structure.append(current_row)
 
+    return function_structure
 
-def capture_and_decode_image():
-    # Start video camera
-    cap = cv2.VideoCapture(0)
-    success, img = cap.read()
-    cap.release()
+# Iterate through the formatted list to achieve function calls
+def build_function_calls(function_structure):
+    function_sequence = []
+    for each_row in function_structure:
+        row = list(reversed(each_row))
 
-    if not success:
-        print("Failed to capture image")
-        return
+        for index, each_func in enumerate(row):
+            if index == 0:
+                mapped_func = id_mappings[each_func[0]]("")
+            else:
+                mapped_func = id_mappings[each_func[0]](mapped_func)
 
-    # Decode QR codes in the image
-    decoded_objects = decode(img)
+        function_sequence.append(mapped_func)
 
-    # Sort decoded QR codes by their topmost y-coordinate
-    sorted_decoded_objects = sorted(decoded_objects, key=lambda x: x.rect.top)
-
-    for code in sorted_decoded_objects:
-        decoded_data = code.data.decode("utf-8")
-
-        # Generate code block based on decoded data
-        code_block = generate_code_block(decoded_data)
-        if code_block:
-            print("Generated Code Block: " + code_block)
-            write_code(code_block, filename)
-
-    '''
-    This portion is for formatting the code blocks, but right now it can't really detect indentions well :/
-    I'll see what other libraries are there
-    '''
-    # try:
-    #     subprocess.run(["black", filename], check=True)
-    #     print(f"Formatted script written to {filename}")
-    # except subprocess.CalledProcessError as e:
-    #     print(f"Error formatting script with Black: {e}")
-
-    # cv2.imshow("Decoded QR Codes", img)
-    cv2.waitKey(0)  # Wait for a key press to exit
-    cv2.destroyAllWindows()
-
-
-# Call the function to capture an image and decode QR codes
-if __name__ == "__main__":
-    capture_and_decode_image()
+    return function_sequence

@@ -1,9 +1,17 @@
-code_templates = {
-    "for": lambda x: f"for i in range({x}):\n",
-    "if": lambda condition: f"if {condition}:\n",
-    "while": lambda condition: f"while {condition}:\n",
-    "variable": lambda var_name, value: f"{var_name} = {value}\n",
-    "print": lambda message: f"print({message})\n",
-    "function": lambda func_name, params: f"def {func_name}({params}):\n",
-    "comment": lambda text: f"# {text}\n"
+id_mappings = {
+    "01": lambda condition: f"move_forward({condition})",
+    "02": lambda condition: f"move_backward({condition})",
+    "03": lambda condition: f"turn_left({condition})",
+    "04": lambda condition: f"turn_right({condition})",
+    "05": lambda condition: f"stop({condition})",
+    "06": lambda condition: f"wait({condition})",
+    "07": lambda condition: f"quack({condition})",
+    "08": lambda condition: f"if({condition})",
+    "09": lambda condition: f"elif({condition})",
+    "10": lambda condition: f"else({condition})",
+    "11": lambda condition: f"obstacle_front({condition})",
+    "12": lambda condition: f"more_than({condition})",
+    "13": lambda condition: f"less_than({condition})",
+    "14": lambda condition: f"equal_to({condition})",
+    "15": lambda condition: f"clap({condition})",
 }
