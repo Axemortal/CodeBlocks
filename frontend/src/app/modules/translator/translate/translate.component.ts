@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { environment } from '../../../../environments/environment';
+import { cppGenerator } from './generators/cpp';
 
 @Component({
   selector: 'app-translate',
