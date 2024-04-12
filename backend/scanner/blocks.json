@@ -1,0 +1,17 @@
+{
+  "move_forward": "move_forward",
+  "move_backward": "move_backward",
+  "turn_left": "turn_left",
+  "turn_right": "turn_right",
+  "stop": "stop",
+  "wait": "wait",
+  "quack": "quack",
+  "if": "if",
+  "else": "else",
+  "end_if": "end_if",
+  "end_else": "end_else",
+  "repeat": "repeat",
+  "end_repeat": "end_repeat",
+  "obstacle_front": "obstacle_front",
+  "clap": "clap"
+}

@@ -3,8 +3,16 @@
     <app-welcome></app-welcome>
 
     <div class="action-container">
-      <!-- <button class="btn text" for="file-upload">Upload Image</button>
-      <input id="file-upload" type="file" /> -->
+      <button class="btn text" for="file-upload" (click)="uploadImage()">
+        Upload Image
+      </button>
+      <input
+        #fileInput
+        id="file-upload"
+        type="file"
+        accept="image/*"
+        (change)="onFileSelected($event)"
+      />
       <button
         *ngIf="isSupported; else notSupported"
         class="btn text"
@@ -26,8 +34,10 @@
     <div class="capture-container">
       <app-capture></app-capture>
       <div class="action-container">
-        <button class="btn text" (click)="onOffCamera()">Stop Recording</button>
-        <button class="btn text" (click)="goToRun()">Finish Recording</button>
+        <button class="btn text" (click)="closeCamera()">Stop Recording</button>
+        <button class="btn text" (click)="finishRecording()">
+          Finish Recording
+        </button>
       </div>
     </div>
   </ng-template>

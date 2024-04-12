@@ -1,4 +1,30 @@
 id_mappings = {
+    '1': '1',
+    '2': '2',
+    '3': '3',
+    '4': '4',
+    '5': '5',
+    '6': '6',
+    '7': '7',
+    '8': '8',
+    '9': '9',
+    "01": "move_forward",
+    "02": "move_backward",
+    "03": "turn_left",
+    "04": "turn_right",
+    "05": "stop",
+    "06": "wait",
+    "07": "quack",
+    "08": "if",
+    "09": "else",
+    "10": "end-if",
+    "11": "end-else",
+    "12": "obstacle_front",
+    "13": "clap"
+}
+
+# TODO - Delete if not needed
+archive = {
     "01": lambda condition: f"move_forward({condition})",
     "02": lambda condition: f"move_backward({condition})",
     "03": lambda condition: f"turn_left({condition})",
@@ -7,11 +33,9 @@ id_mappings = {
     "06": lambda condition: f"wait({condition})",
     "07": lambda condition: f"quack({condition})",
     "08": lambda condition: f"if({condition})",
-    "09": lambda condition: f"elif({condition})",
-    "10": lambda condition: f"else({condition})",
-    "11": lambda condition: f"obstacle_front({condition})",
-    "12": lambda condition: f"more_than({condition})",
-    "13": lambda condition: f"less_than({condition})",
-    "14": lambda condition: f"equal_to({condition})",
-    "15": lambda condition: f"clap({condition})",
+    "09": lambda condition: f"else({condition})",
+    "10": lambda condition: f"end-if({condition})",
+    "11": lambda condition: f"end-else({condition})",
+    "12": lambda condition: f"obstacle_front({condition})",
+    "13": lambda condition: f"clap({condition})"
 }

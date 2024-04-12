@@ -83,19 +83,7 @@ export class BlocklyComponent implements AfterViewInit {
           contents: [
             {
               kind: 'block',
-              type: 'obstacle',
-            },
-            {
-              kind: 'block',
-              type: 'more_than',
-            },
-            {
-              kind: 'block',
-              type: 'less_than',
-            },
-            {
-              kind: 'block',
-              type: 'equals_to',
+              type: 'obstacle_front',
             },
             {
               kind: 'block',
@@ -124,6 +112,7 @@ export class BlocklyComponent implements AfterViewInit {
   }
 
   saveContext() {
+    console.log(Blockly.utils.idGenerator.genUid());
     const workspace = Blockly.getMainWorkspace();
     const state = Blockly.serialization.workspaces.save(workspace);
     localStorage.setItem('blocklyWorkspace', JSON.stringify(state));
