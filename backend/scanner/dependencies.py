@@ -54,7 +54,10 @@ def build_function_calls(function_structure):
 
         for index, each_func in enumerate(row):
             if index == 0:
-                mapped_func = id_mappings[each_func[0]]("")
+                if each_func in ['1', '2', '3', '4', '5', '6', '7', '8', '9']:
+                    mapped_func = id_mappings[each_func[0]]
+                else:
+                    mapped_func = id_mappings[each_func[0]]("")
             else:
                 mapped_func = id_mappings[each_func[0]](mapped_func)
 
