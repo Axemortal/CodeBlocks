@@ -1,7 +1,27 @@
 <div class="container">
-  <h1 class="title">CODEBLOCKS</h1>
-  <div class="text">Ready to code Player?</div>
-  <div class="instruction-container">
-    <h1 class="instruction">Use the blocks to make the robot move!</h1>
+  <div *ngIf="!onInstructions; else instructions">
+    <h1 class="title">CODEBLOCKS</h1>
+    <div class="intro-text">Ready to code Player?</div>
+    <div class="instruction-container" (click)="goToInstructions()">
+      <h1 class="instruction">Use the blocks to make the robot move!</h1>
+      <p class="text">(click for more instructions)</p>
+    </div>
   </div>
 </div>
+
+<ng-template #instructions>
+  <div class="instructionDetails">
+    <div class="intro-text detailsText detailsHeading">
+      Welcome to CodeBlocks!
+    </div>
+    <div class="intro-text detailsText">
+      How to play: <br />
+      1. Listen to your teacher's instructions<br />
+      2. Assemble your blocks into the order you want your robot to move in<br />
+      3. Ask your teacher to scan your blocks<br />
+      4. Check your scan with your teacher<br />
+      5. Press "Run Code"<br />
+      6. Watch your robot go!<br />
+    </div>
+  </div>
+</ng-template>
