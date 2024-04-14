@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 export class LayoutComponent implements OnInit {
   isSupported = false;
   isOpenCamera = false;
+  isUploading = false;
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
@@ -30,8 +31,14 @@ export class LayoutComponent implements OnInit {
     this.isOpenCamera = false;
   }
 
+  goToUpload(){
+    this.isUploading = true;
+    // this.router.navigate(['/translator'])
+  }
+
   goToRun() {
     // Route to translator page
     this.router.navigate(['/translator']);
   }
 }
+

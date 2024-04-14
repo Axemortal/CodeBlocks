@@ -12,6 +12,13 @@
       >
         Start Recording
       </button>
+      <button
+        *ngIf="!isUploading; else uploading" 
+        class="btn text"
+        (click)="goToUpload()"
+      >
+        Upload image
+      </button>
     </div>
 
     <ng-template #notSupported>
@@ -25,10 +32,15 @@
   <ng-template #appCapture>
     <div class="capture-container">
       <app-capture></app-capture>
-      <div class="action-container">
+      <div class="action-container align-bottom">
         <button class="btn text" (click)="onOffCamera()">Stop Recording</button>
         <button class="btn text" (click)="goToRun()">Finish Recording</button>
       </div>
     </div>
+  </ng-template>
+
+  <ng-template #uploading>
+    <app-upload></app-upload>
+    <button class="btn text" (click)="goToRun()">I've uploaded!</button>
   </ng-template>
 </div>
