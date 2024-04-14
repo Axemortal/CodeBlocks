@@ -70,7 +70,7 @@ export class CaptureComponent implements AfterViewInit {
   private initializeCamera(): void {
     this.video = document.createElement('video');
     this.canvas = this.canvasElement.nativeElement;
-    const context = this.canvas.getContext('2d');
+    const context = this.canvas.getContext('2d', { willReadFrequently: true });
     if (!context) {
       throw new Error('Canvas context not found');
     }
@@ -135,14 +135,17 @@ export class CaptureComponent implements AfterViewInit {
         this.canvas.width,
         this.canvas.height
       );
+
+      const dataURL = this.canvas.toDataURL('image/png');
+      const base64Data = dataURL.split(',')[1];
+      this.sendVideoFrameToBackend(base64Data);
+
       const imageData = this.canvasContext.getImageData(
         0,
         0,
         this.canvas.width,
         this.canvas.height
       );
-
-      this.sendVideoFrameToBackend(imageData);
 
       const code = jsQR(imageData.data, imageData.width, imageData.height, {
         inversionAttempts: 'dontInvert',
@@ -191,8 +194,8 @@ export class CaptureComponent implements AfterViewInit {
     return false;
   }
 
-  private sendVideoFrameToBackend(videoFrame: ImageData): void {
-    const samplingRate = 15;
+  private sendVideoFrameToBackend(videoFrame: string): void {
+    const samplingRate = 100;
 
     if (this.framesSinceLastSend < samplingRate) {
       this.framesSinceLastSend++;
@@ -201,9 +204,9 @@ export class CaptureComponent implements AfterViewInit {
       this.framesSinceLastSend = 0;
 
       // Convert ImageData to a Blob object
-      const blob = new Blob([videoFrame.data], { type: 'image/png' });
+      // const blob = new Blob([videoFrame.data], { type: 'image/png' });
       const formData = new FormData();
-      formData.append('videoFrame', blob, 'videoFrame.png');
+      formData.append('videoFrame', videoFrame);
 
       // Send the video frame to the backend
       this.http.post('http://localhost:8000/scanner/scan', formData).subscribe(

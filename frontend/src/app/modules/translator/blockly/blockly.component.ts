@@ -83,19 +83,7 @@ export class BlocklyComponent implements AfterViewInit {
           contents: [
             {
               kind: 'block',
-              type: 'obstacle',
-            },
-            {
-              kind: 'block',
-              type: 'more_than',
-            },
-            {
-              kind: 'block',
-              type: 'less_than',
-            },
-            {
-              kind: 'block',
-              type: 'equals_to',
+              type: 'obstacle_front',
             },
             {
               kind: 'block',
@@ -121,5 +109,21 @@ export class BlocklyComponent implements AfterViewInit {
         toolboxPosition: 'start',
       } as BlocklyOptions);
     }
+  }
+
+  saveContext() {
+    console.log(Blockly.utils.idGenerator.genUid());
+    const workspace = Blockly.getMainWorkspace();
+    const state = Blockly.serialization.workspaces.save(workspace);
+    localStorage.setItem('blocklyWorkspace', JSON.stringify(state));
+    Blockly.getMainWorkspace().clear();
+  }
+
+  loadSavedContext() {
+    const workspace = Blockly.getMainWorkspace();
+    const savedState = JSON.parse(
+      localStorage.getItem('blocklyWorkspace') ?? '{}'
+    );
+    Blockly.serialization.workspaces.load(savedState, workspace);
   }
 }
