@@ -1,2 +1,10 @@
-<label for="test">File Upload</label>
-<input #fileInput id="test" name="test" type="file" />
+<button class="btn text" for="file-upload" (click)="uploadImage()">
+  Upload Image
+</button>
+<input
+  #fileInput
+  id="file-upload"
+  type="file"
+  accept="image/*"
+  (change)="onFileSelected($event)"
+/>

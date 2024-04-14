@@ -1,15 +1,6 @@
 import { isPlatformBrowser } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import {
-  Component,
-  ElementRef,
-  Inject,
-  OnInit,
-  PLATFORM_ID,
-  ViewChild,
-} from '@angular/core';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { Router } from '@angular/router';
-import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-layout',
@@ -17,14 +8,11 @@ import { environment } from '../../../../environments/environment';
   styleUrl: './layout.component.scss',
 })
 export class LayoutComponent implements OnInit {
-  @ViewChild('fileInput') fileInput!: ElementRef;
   isSupported = false;
   isOpenCamera = false;
-  isUploading = false;
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
-    private http: HttpClient,
     private router: Router
   ) {}
 
@@ -44,27 +32,5 @@ export class LayoutComponent implements OnInit {
 
   finishRecording() {
     this.router.navigate(['/translator']);
-  }
-
-  uploadImage() {
-    this.fileInput.nativeElement.click();
-  }
-
-  onFileSelected(event: any) {
-    const file: File = event.target.files[0];
-    if (file) {
-      const formData = new FormData();
-      formData.append('image', file);
-      this.http
-        .post(`${environment.apiUrl}/scanner/upload`, formData)
-        .subscribe(
-          (res) => {
-            console.log(res);
-          },
-          (err) => {
-            console.error(err);
-          }
-        );
-    }
   }
 }

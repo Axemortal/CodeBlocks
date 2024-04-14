@@ -3,29 +3,13 @@
     <app-welcome></app-welcome>
 
     <div class="action-container">
-      <button class="btn text" for="file-upload" (click)="uploadImage()">
-        Upload Image
-      </button>
-      <input
-        #fileInput
-        id="file-upload"
-        type="file"
-        accept="image/*"
-        (change)="onFileSelected($event)"
-      />
+      <app-upload></app-upload>
       <button
         *ngIf="isSupported; else notSupported"
         class="btn text"
         (click)="openCamera()"
       >
         Start Recording
-      </button>
-      <button
-        *ngIf="!isUploading; else uploading"
-        class="btn text"
-        (click)="goToUpload()"
-      >
-        Upload image
       </button>
     </div>
 
@@ -47,9 +31,5 @@
         </button>
       </div>
     </div>
-  </ng-template>
-
-  <ng-template #uploading>
-    <app-upload></app-upload>
   </ng-template>
 </div>
