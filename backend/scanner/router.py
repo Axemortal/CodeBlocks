@@ -1,6 +1,6 @@
 from fastapi import APIRouter, File, UploadFile
 from fastapi.responses import JSONResponse
-from scanner.dependencies import analyse_spatial_arrangement, build_function_calls
+from scanner.dependencies import analyse_spatial_arrangement, build_function_calls, translate_code
 from qreader import QReader
 import cv2
 import numpy as np
@@ -29,9 +29,10 @@ async def upload_image(image: UploadFile = File(...)):
         if len(qr_data) > 0:
             function_structure = analyse_spatial_arrangement(qr_data, metadata)
             function_calls = build_function_calls(function_structure)
+            code_blocks = translate_code(function_calls)
 
             print(f"Assembled Code Block: {function_calls}")
-            return JSONResponse({"message": "Image uploaded successfully", "code": function_calls})
+            return JSONResponse({"message": "Image uploaded successfully", "code": code_blocks})
 
         else:
             return JSONResponse({"message": "No QR code detected in the image"}, status_code=400)
