@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 
 import * as Blockly from 'blockly';
 import { BlocklyOptions } from 'blockly';
+import { cppGenerator } from './generators/cpp';
 
 @Component({
   selector: 'app-blockly',
@@ -10,6 +11,8 @@ import { BlocklyOptions } from 'blockly';
 })
 export class BlocklyComponent implements AfterViewInit {
   @ViewChild('blocklyDiv') blocklyDiv!: ElementRef;
+  storageKey = 'blocklyWorkspace';
+
   constructor() {}
 
   async ngAfterViewInit() {
@@ -112,18 +115,20 @@ export class BlocklyComponent implements AfterViewInit {
   }
 
   saveContext() {
-    console.log(Blockly.utils.idGenerator.genUid());
+    // TODO - Implement CPP Generator in a meaningful way
+    console.log(cppGenerator.workspaceToCode(Blockly.getMainWorkspace()));
     const workspace = Blockly.getMainWorkspace();
-    const state = Blockly.serialization.workspaces.save(workspace);
-    localStorage.setItem('blocklyWorkspace', JSON.stringify(state));
-    Blockly.getMainWorkspace().clear();
+    const data = Blockly.serialization.workspaces.save(workspace);
+    localStorage.setItem(this.storageKey, JSON.stringify(data));
   }
 
   loadSavedContext() {
     const workspace = Blockly.getMainWorkspace();
-    const savedState = JSON.parse(
-      localStorage.getItem('blocklyWorkspace') ?? '{}'
-    );
-    Blockly.serialization.workspaces.load(savedState, workspace);
+    const data = JSON.parse(localStorage.getItem(this.storageKey) ?? '{}');
+
+    // Don't emit events during loading.
+    Blockly.Events.disable();
+    Blockly.serialization.workspaces.load(data, workspace);
+    Blockly.Events.enable();
   }
 }
