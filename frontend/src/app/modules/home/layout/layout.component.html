@@ -1,4 +1,4 @@
-<div class="container">
+<div #container class="container">
   <div *ngIf="!isOpenCamera; else appCapture">
     <app-welcome></app-welcome>
 
@@ -32,4 +32,21 @@
       </div>
     </div>
   </ng-template>
+</div>
+
+<div #tiles id="tiles"></div>
+
+<div #instructionContainer class="instuction-container toggled">
+  <div>Welcome to CodeBlocks!</div>
+  <div>
+    <div>How to play:</div>
+    <div>1. Listen to your teacher's instructions</div>
+    <div>
+      2. Assemble your blocks into the order you want your robot to move in
+    </div>
+    <div>3. Ask your teacher to scan your blocks</div>
+    <div>4. Check your scan with your teacher</div>
+    <div>5. Press "Run Code"</div>
+    <div>6. Watch your robot go!</div>
+  </div>
 </div>
