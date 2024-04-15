@@ -3,6 +3,8 @@ import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import * as Blockly from 'blockly';
 import { BlocklyOptions } from 'blockly';
 import { cppGenerator } from './generators/cpp';
+import { environment } from '../../../../environments/environment';
+import { BlockService } from '../../../services/block.service';
 
 @Component({
   selector: 'app-blockly',
@@ -11,124 +13,76 @@ import { cppGenerator } from './generators/cpp';
 })
 export class BlocklyComponent implements AfterViewInit {
   @ViewChild('blocklyDiv') blocklyDiv!: ElementRef;
-  storageKey = 'blocklyWorkspace';
+  blocks: any;
 
-  constructor() {}
+  constructor(private blockService: BlockService) {}
 
   async ngAfterViewInit() {
-    // Read blocks.json
-    const blocks = await fetch('../../../../assets/blocks.json').then((res) =>
-      res.json()
-    );
-    Blockly.defineBlocksWithJsonArray(blocks);
+    // Add timeout for the blockService to load the toolbox
+    setTimeout(() => {
+      const toolbox = this.blockService.getToolbox();
 
-    const toolbox = {
-      kind: 'categoryToolbox',
-      contents: [
-        {
-          kind: 'category',
-          name: 'Actions',
-          colour: '#5C81A6',
-          contents: [
-            {
-              kind: 'block',
-              type: 'move_forward',
-            },
-            {
-              kind: 'block',
-              type: 'move_backward',
-            },
-            {
-              kind: 'block',
-              type: 'turn_left',
-            },
-            {
-              kind: 'block',
-              type: 'turn_right',
-            },
-            {
-              kind: 'block',
-              type: 'stop',
-            },
-            {
-              kind: 'block',
-              type: 'quack',
-            },
-            {
-              kind: 'block',
-              type: 'wait',
-            },
-          ],
-        },
-        {
-          kind: 'category',
-          name: 'Controls',
-          colour: '#5CA65C',
-          contents: [
-            {
-              kind: 'block',
-              type: 'if_else',
-            },
-            {
-              kind: 'block',
-              type: 'if',
-            },
-            {
-              kind: 'block',
-              type: 'repeat',
-            },
-          ],
-        },
-        {
-          kind: 'category',
-          name: 'Conditions',
-          colour: '#A65C5C',
-          contents: [
-            {
-              kind: 'block',
-              type: 'obstacle_front',
-            },
-            {
-              kind: 'block',
-              type: 'clap',
-            },
-          ],
-        },
-      ],
-    };
+      if (this.blocklyDiv) {
+        Blockly.inject(this.blocklyDiv.nativeElement, {
+          readOnly: false,
+          media: 'media/',
+          trashcan: true,
+          move: {
+            scrollbars: true,
+            drag: true,
+            wheel: true,
+          },
+          toolbox,
+          horizontalLayout: true,
+          toolboxPosition: 'start',
+        } as BlocklyOptions);
+      }
 
-    if (this.blocklyDiv) {
-      Blockly.inject(this.blocklyDiv.nativeElement, {
-        readOnly: false,
-        media: 'media/',
-        trashcan: true,
-        move: {
-          scrollbars: true,
-          drag: true,
-          wheel: true,
-        },
-        toolbox,
-        horizontalLayout: true,
-        toolboxPosition: 'start',
-      } as BlocklyOptions);
-    }
+      this.blocks = this.blockService.getCode();
+      this.blockService.loadSavedContext(this.blocks);
+    }, 1000);
   }
 
   saveContext() {
-    // TODO - Implement CPP Generator in a meaningful way
-    console.log(cppGenerator.workspaceToCode(Blockly.getMainWorkspace()));
-    const workspace = Blockly.getMainWorkspace();
-    const data = Blockly.serialization.workspaces.save(workspace);
-    localStorage.setItem(this.storageKey, JSON.stringify(data));
+    this.blockService.saveContext();
   }
 
   loadSavedContext() {
-    const workspace = Blockly.getMainWorkspace();
-    const data = JSON.parse(localStorage.getItem(this.storageKey) ?? '{}');
+    this.blockService.loadSavedContext();
+  }
 
-    // Don't emit events during loading.
-    Blockly.Events.disable();
-    Blockly.serialization.workspaces.load(data, workspace);
-    Blockly.Events.enable();
+  finish() {
+    const code = cppGenerator.workspaceToCode(Blockly.getMainWorkspace());
+    const formData = new FormData();
+    formData.append(
+      'file',
+      new Blob([code], { type: 'text/plain' }),
+      'code.cpp'
+    );
+
+    console.log('Production API URL: ', environment.apiUrl);
+
+    fetch(`${environment.apiUrl}/compiler/compile`, {
+      method: 'POST',
+      body: formData,
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to download file');
+        }
+        return response.blob();
+      })
+      .then((blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'compiled.exe'; // Set the filename for the downloaded file
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+      })
+      .catch((error) => {
+        console.error('Error downloading file:', error);
+      });
   }
 }

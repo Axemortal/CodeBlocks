@@ -1,68 +1,97 @@
 .container {
   padding: 10px;
 
-  .title {
-    font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
-    font-size: 58px;
-    text-align: center;
-    margin: 20px;
+  .logo {
+    position: relative;
+    margin: 10px 0;
+    z-index: 1;
 
     @media screen and (max-width: 768px) {
-      font-size: 40px;
+      height: calc(2.4em * 2.1); /* Total height of the text */
+    }
+
+    h1 {
+      color: white;
+      font-family: "Rubik", sans-serif;
+      font-size: 48px;
+      text-transform: capitalize;
+      text-align: center;
+
+      @media screen and (max-width: 768px) {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translate(-90%, 0);
+        font-size: 40px;
+
+        .stagger {
+          position: absolute;
+          top: 110%; /* Position it just below the "CODE" text */
+          left: calc(60% - 10px);
+        }
+      }
     }
   }
 
   .intro-text {
-    font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS",
-      sans-serif;
-    font-size: 30px;
-    text-align: center;
     margin-bottom: 25px;
     padding: 10px;
+    font-family: "Rubik", sans-serif;
+    font-size: 30px;
+    text-align: center;
     color: white;
+    z-index: 1;
 
     @media screen and (max-width: 768px) {
       font-size: 23px;
     }
-  }
 
-  .detailsText {
-    color: black;
-    text-align: left;
-  }
-
-  .detailsHeading {
-    font-size: 45px;
-  }
-
-  .text {
-    color: whitesmoke;
-    font-size: 25px;
-    font-stretch: expanded;
-  }
-
-  .instruction-container {
-    margin: 0 auto;
-    border-radius: 15px;
-    padding: 25px;
-    background-color: #ee4266;
-    box-shadow: 0px 10px 30px #f5587aac;
-
-    .instruction {
-      font-family: "Luckiest Guy", cursive;
-      font-size: 45px;
-      font-weight: 400;
-      line-height: 1;
-      text-align: center;
-      color: whitesmoke;
+    .fancy {
+      color: rgb(236, 64, 122);
+      font-family: "Dancing Script", cursive;
+      font-size: 1.5em;
+      line-height: 0.9em;
     }
   }
 
-  .instructionDetails {
-    display: flex;
-    flex-direction: column;
-    height: fit-content;
-    border-radius: 15px;
-    background-color: #ff5885;
+  .instructions {
+    position: relative;
+    margin: 20px auto;
+    padding: 25px;
+    text-align: center;
+    z-index: -2;
+
+    > div:first-of-type {
+      font-family: "Rubik", sans-serif;
+      font-size: 45px;
+      font-weight: 400;
+      line-height: 1;
+      color: whitesmoke;
+    }
+
+    > div:nth-of-type(2) {
+      margin-top: 10px;
+      color: whitesmoke;
+      font-size: 25px;
+    }
+
+    &::before,
+    &::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      height: 1px; /* Adjust the thickness of the line */
+      background-color: white; /* Adjust the color of the line */
+    }
+
+    &::before {
+      top: -10px;
+    }
+
+    &::after {
+      bottom: -10px;
+    }
   }
 }

@@ -76,11 +76,11 @@ def build_function_calls(function_structure):
     '''
 
     for row in function_structure:
-        mapped_func = []
+        # mapped_func = []
         for func in row:
-            mapped_func.append(id_mappings[func[0]])
+            function_sequence.append(id_mappings[func[0]])
 
-        function_sequence.append(mapped_func)
+        # function_sequence.append(mapped_func)
 
     return function_sequence
 

@@ -3,6 +3,51 @@
 @import "reset";
 @import url("https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap");
 
+// Start - Styling for the background
+:root {
+  --g1: rgb(51, 38, 68);
+  --g2: rgb(133, 106, 207);
+}
+
+@keyframes background-pan {
+  from {
+    background-position: 0% center;
+  }
+
+  to {
+    background-position: -200% center;
+  }
+}
+
+body {
+  animation: background-pan 10s linear infinite;
+  background: linear-gradient(to right, var(--g1), var(--g2), var(--g1));
+  background-size: 200%;
+  height: 100vh;
+  overflow: hidden;
+  margin: 0px;
+}
+
+// End - Styling for the background
+
+// Start - Defining fonts
+@font-face {
+  font-family: "Dancing Script";
+  src: url("../../../assets/fonts/Dancing_Script/DancingScript-VariableFont_wght.ttf")
+    format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Rubik";
+  src: url("../../../assets/fonts/Rubik/Rubik-VariableFont_wght.ttf")
+    format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+// End - Defining fonts
+
 .btn {
   display: inline-block;
   box-sizing: border-box;
@@ -37,5 +82,5 @@
   font-size: 34px;
   text-align: center;
   padding: 10px;
-  line-height:normal;
+  line-height: normal;
 }

@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
+import { BlocklyComponent } from '../blockly/blockly.component';
 
 @Component({
   selector: 'app-layout',
@@ -7,22 +8,15 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrl: './layout.component.scss',
 })
 export class LayoutComponent {
-  constructor(private router: Router, private route: ActivatedRoute) {
-    this.route.params.subscribe((params) => {
-      if (params['id']) {
-        this.startEditBlocks();
-      }
-    });
-  }
-  isEditBlocks = false;
+  @ViewChild('blocklyComponent') blocklyComponent!: BlocklyComponent;
 
-  startEditBlocks() {
-    this.isEditBlocks = true;
-  }
-
-  startRunning() {}
+  constructor(private router: Router) {}
 
   endRun() {
     this.router.navigate(['/home']);
+  }
+
+  runCode() {
+    this.blocklyComponent.finish();
   }
 }

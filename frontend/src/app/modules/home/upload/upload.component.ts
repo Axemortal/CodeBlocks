@@ -1,6 +1,8 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { BlockService } from '../../../services/block.service';
 
 @Component({
   selector: 'app-upload',
@@ -10,7 +12,11 @@ import { HttpClient } from '@angular/common/http';
 export class UploadComponent implements AfterViewInit {
   @ViewChild('fileInput') fileInput!: ElementRef;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private blockService: BlockService
+  ) {}
 
   ngAfterViewInit() {}
 
@@ -26,8 +32,11 @@ export class UploadComponent implements AfterViewInit {
       this.http
         .post(`${environment.apiUrl}/scanner/upload`, formData)
         .subscribe(
-          (res) => {
-            console.log(res);
+          (res: any) => {
+            if (res.code) {
+              this.blockService.setCode(res.code);
+              this.router.navigate(['/translator']);
+            }
           },
           (err) => {
             console.error(err);
