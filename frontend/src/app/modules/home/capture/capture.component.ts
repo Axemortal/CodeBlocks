@@ -203,10 +203,17 @@ export class CaptureComponent implements AfterViewInit {
     } else {
       this.framesSinceLastSend = 0;
 
-      // Convert ImageData to a Blob object
-      // const blob = new Blob([videoFrame.data], { type: 'image/png' });
+      const byteCharacters = atob(videoFrame);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: 'image/png' });
       const formData = new FormData();
+
       formData.append('videoFrame', videoFrame);
+      formData.append('videoFrame', blob, 'videoFrame.png');
 
       // Send the video frame to the backend
       this.http.post('http://localhost:8000/scanner/scan', formData).subscribe(

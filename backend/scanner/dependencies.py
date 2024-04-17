@@ -4,7 +4,7 @@ import numpy as np
 import os
 from scanner.templates import id_mappings
 
-HEIGHT_TOLERANCE = 180
+HEIGHT_TOLERANCE = 225
 
 
 def get_row(y):

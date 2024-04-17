@@ -55,7 +55,7 @@
   },
   {
     "type": "wait",
-    "message0": "wait %1",
+    "message0": "Wait %1",
     "args0": [
       {
         "type": "input_value",
