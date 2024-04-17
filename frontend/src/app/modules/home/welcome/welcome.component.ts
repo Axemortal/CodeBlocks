@@ -5,4 +5,10 @@ import { Component } from '@angular/core';
   templateUrl: './welcome.component.html',
   styleUrl: './welcome.component.scss',
 })
-export class WelcomeComponent {}
+export class WelcomeComponent {
+  onInstructions = false;
+
+  goToInstruction(){
+    this.onInstructions = true;
+  }
+}

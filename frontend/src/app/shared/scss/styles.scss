@@ -2,11 +2,12 @@
 
 @import "reset";
 @import url("https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&family=Poppins:ital,wght@0,400;1,900&display=swap');
 
 // Start - Styling for the background
 :root {
   --g1: rgb(51, 38, 68);
-  --g2: rgb(133, 106, 207);
+  --g2: #8535D4;
 }
 
 @keyframes background-pan {
@@ -19,14 +20,18 @@
   }
 }
 
-body {
-  animation: background-pan 10s linear infinite;
-  background: linear-gradient(to right, var(--g1), var(--g2), var(--g1));
-  background-size: 200%;
-  height: 100vh;
-  overflow: hidden;
-  margin: 0px;
+body{
+  background: #8535D4
 }
+
+// body {
+//   animation: background-pan 10s linear infinite;
+//   background: linear-gradient(to right, var(--g1), var(--g2), var(--g1));
+//   background-size: 200%;
+//   height: 100vh;
+//   overflow: hidden;
+//   margin: 0px;
+// }
 
 // End - Styling for the background
 
@@ -40,11 +45,16 @@ body {
 }
 
 @font-face {
-  font-family: "Rubik";
-  src: url("../../../assets/fonts/Rubik/Rubik-VariableFont_wght.ttf")
+  font-family: "Poppins", sans-serif;
+  src: url("../../../assets/fonts/Poppins/Poppins-Regular.ttf")
     format("truetype");
-  font-weight: normal;
-  font-style: normal;
+  font-weight: 400;
+  font-style: normal;  
+  // font-family: "Rubik";
+  // src: url("../../../assets/fonts/Rubik/Rubik-VariableFont_wght.ttf")
+  //   format("truetype");
+  // font-weight: normal;
+  // font-style: normal;
 }
 // End - Defining fonts
 
@@ -54,9 +64,10 @@ body {
   margin: 0 0 10px 0;
   border-style: none;
   padding: 10px 16px;
-  border-radius: 8px;
+  border-radius: 10px;
   background-color: #ffd23f;
-  color: #5e1675;
+  color: #000000;
+  box-shadow: 0 4px 12px #ececec9e;
   font-size: 14px;
   font-weight: 500;
   line-height: 20px;

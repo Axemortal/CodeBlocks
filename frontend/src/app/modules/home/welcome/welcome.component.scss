@@ -1,49 +1,59 @@
 .container {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
   padding: 10px;
 
   .logo {
-    position: relative;
-    margin: 10px 0;
-    z-index: 1;
+    display: flex; /* Use flexbox to align items */
+    justify-content: center; /* Horizontally center the image */
+    align-items: center;
+    // margin: 10px 0;
+    // z-index: 1;
 
-    @media screen and (max-width: 768px) {
-      height: calc(2.4em * 2.1); /* Total height of the text */
-    }
+    // @media screen and (max-width: 768px) {
+    //   display: flex; /* Use flexbox to align items */
+    //   justify-content: center; /* Horizontally center the image */
+    //   align-items: center;
+    //   margin-left: auto;
+    //   margin-right: auto;
+    // }
 
-    h1 {
-      color: white;
-      font-family: "Rubik", sans-serif;
-      font-size: 48px;
-      text-transform: capitalize;
-      text-align: center;
+    // h1 {
+    //   color: white;
+    //   font-family: "Rubik", sans-serif;
+    //   font-size: 48px;
+    //   text-transform: capitalize;
+    //   text-align: center;
 
-      @media screen and (max-width: 768px) {
-        position: absolute;
-        top: 0;
-        left: 50%;
-        transform: translate(-90%, 0);
-        font-size: 40px;
+    //   @media screen and (max-width: 768px) {
+    //     position: absolute;
+    //     top: 0;
+    //     left: 50%;
+    //     transform: translate(-90%, 0);
+    //     font-size: 40px;
 
-        .stagger {
-          position: absolute;
-          top: 110%; /* Position it just below the "CODE" text */
-          left: calc(60% - 10px);
-        }
-      }
-    }
+    //     .stagger {
+    //       position: absolute;
+    //       top: 110%; /* Position it just below the "CODE" text */
+    //       left: calc(60% - 10px);
+    //     }
+    //   }
+    // }
   }
 
   .intro-text {
     margin-bottom: 25px;
     padding: 10px;
-    font-family: "Rubik", sans-serif;
-    font-size: 30px;
+    font-family: "Luckiest Guy", cursive;
+    font-weight: 400;
+    font-size: 40px;
+    font-style: normal;
     text-align: center;
     color: white;
-    z-index: 1;
 
     @media screen and (max-width: 768px) {
-      font-size: 23px;
+      font-size: 40px;
     }
 
     .fancy {
@@ -57,41 +67,40 @@
   .instructions {
     position: relative;
     margin: 20px auto;
-    padding: 25px;
+    padding: 15px;
     text-align: center;
     z-index: -2;
 
+    > .duck{
+      width: 200px; 
+      height: 200px;
+      padding-bottom: 10px;
+    }
+
     > div:first-of-type {
-      font-family: "Rubik", sans-serif;
-      font-size: 45px;
-      font-weight: 400;
+      font-family: "Poppins", sans-serif;
+      font-weight: normal;
+      font-style: normal;
+      font-size: 35px;
       line-height: 1;
       color: whitesmoke;
     }
 
     > div:nth-of-type(2) {
+      font-family: "Poppins", sans-serif;
+      font-weight: normal;
+      font-style: normal;
       margin-top: 10px;
       color: whitesmoke;
-      font-size: 25px;
-    }
-
-    &::before,
-    &::after {
-      content: "";
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 90%;
-      height: 1px; /* Adjust the thickness of the line */
-      background-color: white; /* Adjust the color of the line */
-    }
-
-    &::before {
-      top: -10px;
-    }
-
-    &::after {
-      bottom: -10px;
+      font-size: 18px;
     }
   }
+}
+
+.duck{
+  width: 200px; 
+  height: 200px;
+  padding-bottom: 10px;
+  background-color: transparent;
+  box-shadow: 0px 0px 0px;
 }
