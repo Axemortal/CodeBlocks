@@ -146,8 +146,10 @@ def translate_code(function_calls):
 
         elif blocks[i]["type"] == "repeat":
             blocks[i].update({
-                "repeat_repeat": {
-                    "block": blocks[i + 1]
+                "inputs": {
+                    "repeat_repeat": {
+                        "block": blocks[i + 1]
+                    }
                 }
             })
 
