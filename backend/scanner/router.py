@@ -37,30 +37,30 @@ async def scan_code(videoFrame: UploadFile = File(...)):
         contents = await videoFrame.read()
         nparr = np.frombuffer(contents, np.uint8)
         image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-
-        decoded_objects = qreader.detect_and_decode(
-            image, return_detections=True)
         
-        if decoded_objects:
-            qr_data = decoded_objects[0]
-            metadata = decoded_objects[1]
+        decoded_objects = qreader.detect_and_decode(
+                    image, return_detections=True)
+        
+        qr_data = decoded_objects[0]
+        metadata = decoded_objects[1]
 
+        if len(qr_data) > 0:
             function_structure = analyse_spatial_arrangement(qr_data, metadata)
             function_calls = build_function_calls(function_structure)
+            code_blocks = translate_code(function_calls)
 
             print(f"Assembled Code Block: {function_calls}")
-
             consensus_reached = await update_scan_cache(function_calls)
             if consensus_reached:
                 await clear_scan_cache()  # Clear the cache once consensus is reached
                 return JSONResponse({
                     "message": "Consensus reached on QR code interpretation.",
-                    "code": function_calls
+                    "code": code_blocks
                 })
             else:
                 return JSONResponse({
                     "message": "Consensus not yet reached, continue scanning.",
-                    "temp_code": function_calls  # Return the temporarily built function calls
+                    "temp_code": code_blocks  # Return the temporarily built function calls
                 }, status_code=202)
 
         else:

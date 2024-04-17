@@ -64,7 +64,7 @@ def build_function_calls(function_structure):
     for row in function_structure:
         for func in row:
             if func is None:
-                function_sequence.append(None)
+                continue
             else:
                 function_sequence.append(id_mappings[func[0]])
 
