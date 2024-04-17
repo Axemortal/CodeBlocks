@@ -4,7 +4,7 @@ import numpy as np
 import os
 from scanner.templates import id_mappings
 
-HEIGHT_TOLERANCE = 250
+HEIGHT_TOLERANCE = 180
 
 
 def get_row(y):
@@ -60,27 +60,13 @@ def analyse_spatial_arrangement(qr_data, metadata):
 
 def build_function_calls(function_structure):
     function_sequence = []
-    # TODO - Delete if not needed
-    '''
-    for each_row in function_structure:
-        row = list(reversed(each_row))
-
-        for index, each_func in enumerate(row):
-            if index == 0:
-                if each_func in ['1', '2', '3', '4', '5', '6', '7', '8', '9']:
-                    mapped_func = id_mappings[each_func[0]]
-                else:
-                    mapped_func = id_mappings[each_func[0]]("")
-            else:
-                mapped_func = id_mappings[each_func[0]](mapped_func)
-    '''
 
     for row in function_structure:
-        # mapped_func = []
         for func in row:
-            function_sequence.append(id_mappings[func[0]])
-
-        # function_sequence.append(mapped_func)
+            if func is None:
+                function_sequence.append(None)
+            else:
+                function_sequence.append(id_mappings[func[0]])
 
     return function_sequence
 
@@ -115,8 +101,19 @@ def translate_code(function_calls):
                     top_block = if_stack.pop()
 
             elif func == "repeat":
-                block["fields"] = {"NAME": function_calls[i + 1]}
-                i += 1
+                # Increment to the next block, which should be a number
+                num = ''
+                while i+1 < len(function_calls) and function_calls[i+1].isdigit():
+                    num += function_calls[i+1]
+                    i += 1
+                block["fields"] = {"NAME": num}
+
+            elif func == "wait":
+                num = ''
+                while i+1 < len(function_calls) and function_calls[i+1].isdigit():
+                    num += function_calls[i+1]
+                    i += 1
+                block["fields"] = {"wait_wait": num}
 
             blocks.append(block)
 

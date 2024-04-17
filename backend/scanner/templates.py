@@ -20,7 +20,9 @@ id_mappings = {
     "10": "end-if",
     "11": "end-else",
     "12": "obstacle_front",
-    "13": "clap"
+    "13": "clap",
+    "14": "repeat",
+    "15": "end-repeat",
 }
 
 # TODO - Delete if not needed
