@@ -8,7 +8,7 @@ router = APIRouter(
     prefix='/compiler'
 )
 
-DEVICE_IP = "192.168.248.21"
+DEVICE_IP = "192.168.248.59"
 
 
 @router.post('/compile')

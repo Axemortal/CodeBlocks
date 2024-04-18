@@ -8,30 +8,32 @@ const char* ssid = "Europa";
 const char* password = "codeblocks";
 
 // Motor pins
-#define PWMA 25
-#define AIN2 26
-#define AIN1 27
-#define STBY 14
-#define BIN1 12
-#define BIN2 13
-#define PWMB 33
+#define PWMA 33
+#define AIN2 25
+#define AIN1 26
+#define STBY 27
+#define BIN1 14
+#define BIN2 12
+#define PWMB 13
 
 // Ultrasonic pins
-#define trigPin 34
-#define echoPin 35
+#define trigPin 35
+#define echoPin 32
 
 // Buzzer pins
-#define buzzPin 21
+#define buzzPin 34
+
+// Loop init
 unsigned long previousMillis = 0; // will store last time LED was updated
 const long interval = 1000; // interval at which to blink (milliseconds)
-int buzzState = LOW; // ledState used to set the LEDo
+int repeatState = LOW; // ledState used to set the LEDo
 
+// Motor init
 // these constants are used to allow you to make your motor configuration 
 // line up with function names like forward.  Value can be 1 or -1
 const int offsetR = -1;
 const int offsetL = 1;
 
-// Motor init
 // Initializing motors.  The library will allow you to initialize as many
 // motors as you have memory for.  If you are using functions like forward
 // that take 2 motors as arguements you can either write new functions or
@@ -130,6 +132,7 @@ void setup() {
 
   // Buzzer setup
   pinMode(buzzPin, OUTPUT);
+  pinMode(LED_BUILTIN, OUTPUT);
 
   // Done!
   quack();
@@ -141,5 +144,22 @@ void setup() {
 
 void loop() {
   ArduinoOTA.handle();
+  //Here is the LED blinking section
+  unsigned long currentMillis = millis();
+  if (currentMillis - previousMillis >= interval) {
+  // save the last time you blinked the LED
+  previousMillis = currentMillis;
+  // if the LED is off turn it on and vice-versa:
+  repeatState = not(repeatState);
+
+  digitalWrite(LED_BUILTIN, repeatState);
+
+  if (repeatState) {
+    // loop ended
+  } else {
+    // loop continues
+  }
+  }
+  
     
 }
