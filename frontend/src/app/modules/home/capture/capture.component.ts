@@ -10,6 +10,8 @@ import {
 import jsQR, { QRCode } from 'jsqr';
 import { Point } from 'jsqr/dist/locator';
 import { environment } from '../../../../environments/environment';
+import { Router } from '@angular/router';
+import { BlockService } from '../../../services/block.service';
 
 @Component({
   selector: 'app-capture',
@@ -26,13 +28,18 @@ export class CaptureComponent implements AfterViewInit {
     '🎥 Unable to access video stream (please make sure you have a webcam enabled)';
 
   private aspectRatio: number | undefined;
-  private capturedData: QRCode[] = [];
   private video!: HTMLVideoElement;
   private canvas!: HTMLCanvasElement;
   private canvasContext!: CanvasRenderingContext2D;
   private framesSinceLastSend = 0;
+  private isDestroyed = false;
 
-  constructor(private elementRef: ElementRef, private http: HttpClient) {}
+  constructor(
+    private elementRef: ElementRef,
+    private http: HttpClient,
+    private router: Router,
+    private blockService: BlockService
+  ) {}
 
   ngAfterViewInit(): void {
     this.initializeCamera();
@@ -40,6 +47,7 @@ export class CaptureComponent implements AfterViewInit {
 
   ngOnDestroy(): void {
     this.stopCamera();
+    this.isDestroyed = true;
   }
 
   @HostListener('window:resize', ['$event'])
@@ -77,6 +85,8 @@ export class CaptureComponent implements AfterViewInit {
     }
     this.canvasContext = context;
 
+    this.output = '⌛ Loading video...';
+
     // Use facingMode: environment to attempt to get the front camera on phones
     const mediaConstraints = { video: { facingMode: 'environment' } };
     navigator.mediaDevices
@@ -87,6 +97,7 @@ export class CaptureComponent implements AfterViewInit {
         this.video.srcObject = stream;
         this.video.setAttribute('playsinline', 'true'); // required to tell iOS safari we don't want fullscreen
         this.video.play();
+        this.output = 'Scanning';
         requestAnimationFrame(() => this.tick());
       })
       .catch((err) => {
@@ -124,7 +135,9 @@ export class CaptureComponent implements AfterViewInit {
   }
 
   private tick(): void {
-    this.output = '⌛ Loading video...';
+    if (this.isDestroyed) {
+      return;
+    }
     if (this.video.readyState === this.video.HAVE_ENOUGH_DATA) {
       this.canvas.hidden = false;
       this.canvas.height = this.video.videoHeight;
@@ -154,21 +167,6 @@ export class CaptureComponent implements AfterViewInit {
 
       if (code && this.isValidCode(code.data)) {
         this.drawQRCodeBorders(code);
-        if (!this.checkForRepeatedQRCode(code)) {
-          this.capturedData.push(code);
-        }
-      }
-
-      if (this.capturedData.length > 0) {
-        const output = this.capturedData
-          .map(
-            (code) =>
-              `${code.data}, (${code.location.bottomLeftCorner.x}, ${code.location.bottomLeftCorner.y})`
-          )
-          .join(', ');
-        this.output = '📸 Captured data: ' + output;
-      } else {
-        this.output = '🔍 No QR code found';
       }
     }
     requestAnimationFrame(() => this.tick());
@@ -179,15 +177,6 @@ export class CaptureComponent implements AfterViewInit {
       return false;
     }
     return true;
-  }
-
-  private checkForRepeatedQRCode(code: QRCode): boolean {
-    for (const captured of this.capturedData) {
-      if (captured.data === code.data) {
-        return true;
-      }
-    }
-    return false;
   }
 
   private sendVideoFrameToBackend(videoFrame: string): void {
@@ -213,11 +202,12 @@ export class CaptureComponent implements AfterViewInit {
 
       // Send the video frame to the backend
       this.http.post(`${environment.apiUrl}/scanner/scan`, formData).subscribe(
-        (response) => {
-          console.log('Response from backend:', response);
+        (res: any) => {
+          this.blockService.setCode(res.code);
+          this.router.navigate(['/translator']);
         },
-        (error) => {
-          console.error('Error sending video frame to backend:', error);
+        (err) => {
+          console.error('Error sending video frame to backend:', err);
         }
       );
     }

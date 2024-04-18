@@ -1,6 +1,6 @@
 from fastapi import APIRouter, File, UploadFile
 from fastapi.responses import JSONResponse
-from scanner.dependencies import analyse_spatial_arrangement, map_functions, map_blocks
+from scanner.dependencies import analyse_spatial_arrangement_upload, analyse_spatial_arrangement_scan, map_functions, map_blocks
 from qreader import QReader
 import cv2
 import numpy as np
@@ -21,11 +21,11 @@ async def clear_scan_cache():
 
 async def update_scan_cache(assembled_code):
     cached_results.append(assembled_code)
-    if len(cached_results) > 3:
+    if len(cached_results) > 2:
         cached_results.pop(0)  # Maintain only the last three results
 
     # Check if all three entries are the same and there are exactly three entries
-    if len(cached_results) == 3 and all(code == cached_results[0] for code in cached_results):
+    if len(cached_results) == 2 and all(code == cached_results[0] for code in cached_results):
         return True
 
     return False
@@ -41,11 +41,12 @@ async def scan_code(videoFrame: UploadFile = File(...)):
         decoded_objects = qreader.detect_and_decode(
             image, return_detections=True)
 
-        qr_data = decoded_objects[0]
-        metadata = decoded_objects[1]
+        if decoded_objects:
+            qr_data = decoded_objects[0]
+            metadata = decoded_objects[1]
 
         if len(qr_data) > 0:
-            function_structure = analyse_spatial_arrangement(qr_data, metadata)
+            function_structure = analyse_spatial_arrangement_scan(qr_data, metadata)
             function_sequence = map_functions(function_structure)
             code_blocks = map_blocks(function_sequence)
 
@@ -57,15 +58,12 @@ async def scan_code(videoFrame: UploadFile = File(...)):
                     "message": "Consensus reached on QR code interpretation.",
                     "code": code_blocks
                 })
-            else:
-                print(f"Current Consensus: {len(cached_results)}")
 
         else:
             return JSONResponse({"message": "No QR code detected in the frame"}, status_code=400)
 
     except Exception as e:
         await clear_scan_cache()  # Clear cache in case of error to prevent stale data
-        print(f"Failed to process video frame: {repr(e)}")
         return JSONResponse({"message": "Failed to process the video frame"}, status_code=500)
 
 
@@ -79,11 +77,14 @@ async def upload_image(image: UploadFile = File(...)):
         decoded_objects = qreader.detect_and_decode(
             image, return_detections=True)
 
-        qr_data = decoded_objects[0]
-        metadata = decoded_objects[1]
+        if decoded_objects:
+            qr_data = decoded_objects[0]
+            metadata = decoded_objects[1]
+        else:
+            print(decoded_objects)
 
         if len(qr_data) > 0:
-            function_structure = analyse_spatial_arrangement(qr_data, metadata)
+            function_structure = analyse_spatial_arrangement_upload(qr_data, metadata)
             function_sequence = map_functions(function_structure)
             code_blocks = map_blocks(function_sequence)
 

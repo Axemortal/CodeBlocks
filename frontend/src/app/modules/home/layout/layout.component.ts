@@ -10,7 +10,6 @@ import {
   AfterViewInit,
   ViewEncapsulation,
 } from '@angular/core';
-import { Router } from '@angular/router';
 import anime from 'animejs/lib/anime.es.js';
 
 @Component({
@@ -29,10 +28,7 @@ export class LayoutComponent implements OnInit, AfterViewInit {
   isSupported = false;
   isOpenCamera = false;
 
-  constructor(
-    @Inject(PLATFORM_ID) private platformId: Object,
-    private router: Router
-  ) {}
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
@@ -50,10 +46,6 @@ export class LayoutComponent implements OnInit, AfterViewInit {
 
   closeCamera() {
     this.isOpenCamera = false;
-  }
-
-  finishRecording() {
-    this.router.navigate(['/translator']);
   }
 
   handleOnClick(index: number) {
