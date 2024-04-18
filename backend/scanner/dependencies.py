@@ -58,20 +58,18 @@ def analyse_spatial_arrangement(qr_data, metadata):
 # Iterate through the formatted list to achieve function calls
 
 
-def build_function_calls(function_structure):
+def map_functions(function_structure):
     function_sequence = []
 
     for row in function_structure:
         for func in row:
-            if func is None:
-                continue
-            else:
+            if func is not None:
                 function_sequence.append(id_mappings[func[0]])
 
     return function_sequence
 
 
-def translate_code(function_calls):
+def map_blocks(function_sequence):
     file_directory = os.path.dirname(__file__)
     file_path = os.path.join(file_directory, "blocks.json")
 
@@ -82,8 +80,8 @@ def translate_code(function_calls):
     if_stack = []  # Keep track of if blocks
     i = 0  # Index of the function calls
 
-    while i < len(function_calls):
-        func = function_calls[i]
+    while i < len(function_sequence):
+        func = function_sequence[i]
 
         if func in block_types:
             block = {"type": block_types[func], "id": uuid.uuid4().hex}
@@ -103,15 +101,15 @@ def translate_code(function_calls):
             elif func == "repeat":
                 # Increment to the next block, which should be a number
                 num = ''
-                while i+1 < len(function_calls) and function_calls[i+1].isdigit():
-                    num += function_calls[i+1]
+                while i+1 < len(function_sequence) and function_sequence[i+1].isdigit():
+                    num += function_sequence[i+1]
                     i += 1
                 block["fields"] = {"NAME": num}
 
             elif func == "wait":
                 num = ''
-                while i+1 < len(function_calls) and function_calls[i+1].isdigit():
-                    num += function_calls[i+1]
+                while i+1 < len(function_sequence) and function_sequence[i+1].isdigit():
+                    num += function_sequence[i+1]
                     i += 1
                 block["fields"] = {"wait_wait": num}
 
