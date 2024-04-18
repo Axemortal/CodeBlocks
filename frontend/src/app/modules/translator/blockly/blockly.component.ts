@@ -51,38 +51,23 @@ export class BlocklyComponent implements AfterViewInit {
     this.blockService.loadSavedContext();
   }
 
-  finish() {
+  runCode() {
     const code = cppGenerator.workspaceToCode(Blockly.getMainWorkspace());
-    const formData = new FormData();
-    formData.append(
-      'file',
-      new Blob([code], { type: 'text/plain' }),
-      'code.cpp'
-    );
 
     console.log('Production API URL: ', environment.apiUrl);
 
     fetch(`${environment.apiUrl}/compiler/compile`, {
       method: 'POST',
-      body: formData,
+      body: code,
     })
       .then((response) => {
         if (!response.ok) {
-          throw new Error('Failed to download file');
+          throw new Error('Error compiling code');
         }
-        return response.blob();
-      })
-      .then((blob) => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'compiled.exe'; // Set the filename for the downloaded file
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
+        return response;
       })
       .catch((error) => {
-        console.error('Error downloading file:', error);
+        console.error('Error compiling code:', error);
       });
   }
 }
