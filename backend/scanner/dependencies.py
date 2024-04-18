@@ -4,24 +4,29 @@ import numpy as np
 import os
 from scanner.templates import id_mappings
 
-HEIGHT_TOLERANCE = 225
+HEIGHT_TOLERANCE_UPLOAD = 300
+HEIGHT_TOLERANCE_SCAN = 30
 
 
-def get_row(y):
-    return round(y / HEIGHT_TOLERANCE)
+def get_row_upload(y):
+    return round(y / HEIGHT_TOLERANCE_UPLOAD)
+
+
+def get_row_scan(y):
+    return round(y / HEIGHT_TOLERANCE_SCAN)
 
 
 def get_qr_top_and_left(quad_xy):
-    # Calculate the average top Y coordinate (mean of the Y values of the top-left and top-right corners)
+    # Calculate the average top Y coordinate and left X coordinate
     top = np.mean([quad_xy[0][1], quad_xy[1][1]])
-    # Calculate the average left X coordinate (mean of the X values of the top-left and bottom-left corners)
     left = np.mean([quad_xy[0][0], quad_xy[3][0]])
     return top, left
 
-# Analyses the X and Y values of each QR Code to determine their orders
 
-
-def analyse_spatial_arrangement(qr_data, metadata):
+'''
+Analyses the X and Y values of each QR Code to determine their orders
+'''
+def analyse_spatial_arrangement_upload(qr_data, metadata):
     qr_codes_with_positions = []
     for i, data in enumerate(qr_data):
         if i < len(metadata):
@@ -30,8 +35,8 @@ def analyse_spatial_arrangement(qr_data, metadata):
             qr_codes_with_positions.append((data, (top, left)))
 
     sorted_qrs = sorted(qr_codes_with_positions, key=lambda item: (
-        get_row(item[1][0]), item[1][1]))
-
+        get_row_upload(item[1][0]), item[1][1]))
+    
     function_structure = []
     current_row = [sorted_qrs[0]]  # Insert first QR Code in first row
 
@@ -41,7 +46,7 @@ def analyse_spatial_arrangement(qr_data, metadata):
             current_row = [item]
         last_qr, (last_top, last_left) = current_row[-1]
 
-        if get_row(top) == get_row(last_top):
+        if get_row_upload(top) == get_row_upload(last_top):
             if item in current_row:
                 continue
             current_row.append(item)
@@ -53,25 +58,59 @@ def analyse_spatial_arrangement(qr_data, metadata):
     if current_row:
         function_structure.append(current_row)
 
+    print(function_structure)
     return function_structure
 
-# Iterate through the formatted list to achieve function calls
+def analyse_spatial_arrangement_scan(qr_data, metadata):
+    qr_codes_with_positions = []
+    for i, data in enumerate(qr_data):
+        if i < len(metadata):
+            top, left = get_qr_top_and_left(metadata[i]['quad_xy'])
+            # Sample: ("QR Data Here", (100, 200))
+            qr_codes_with_positions.append((data, (top, left)))
 
+    sorted_qrs = sorted(qr_codes_with_positions, key=lambda item: (
+        get_row_scan(item[1][0]), item[1][1]))
+    
+    function_structure = []
+    current_row = [sorted_qrs[0]]  # Insert first QR Code in first row
 
-def build_function_calls(function_structure):
+    for item in sorted_qrs[1:]:
+        qr, (top, left) = item
+        if len(current_row) == 0:
+            current_row = [item]
+        last_qr, (last_top, last_left) = current_row[-1]
+
+        if get_row_scan(top) == get_row_scan(last_top):
+            if item in current_row:
+                continue
+            current_row.append(item)
+
+        else:
+            function_structure.append(current_row)
+            current_row = [item]
+
+    if current_row:
+        function_structure.append(current_row)
+
+    print(function_structure)
+    return function_structure
+
+'''
+Iterate through the formatted list to achieve function calls
+'''
+def map_functions(function_structure):
     function_sequence = []
 
     for row in function_structure:
         for func in row:
-            if func is None:
-                function_sequence.append(None)
-            else:
+            if func[0] is not None:
                 function_sequence.append(id_mappings[func[0]])
 
     return function_sequence
 
 
-def translate_code(function_calls):
+def map_blocks(function_sequence):
     file_directory = os.path.dirname(__file__)
     file_path = os.path.join(file_directory, "blocks.json")
 
@@ -82,8 +121,8 @@ def translate_code(function_calls):
     if_stack = []  # Keep track of if blocks
     i = 0  # Index of the function calls
 
-    while i < len(function_calls):
-        func = function_calls[i]
+    while i < len(function_sequence):
+        func = function_sequence[i]
 
         if func in block_types:
             block = {"type": block_types[func], "id": uuid.uuid4().hex}
@@ -103,15 +142,15 @@ def translate_code(function_calls):
             elif func == "repeat":
                 # Increment to the next block, which should be a number
                 num = ''
-                while i+1 < len(function_calls) and function_calls[i+1].isdigit():
-                    num += function_calls[i+1]
+                while i+1 < len(function_sequence) and function_sequence[i+1].isdigit():
+                    num += function_sequence[i+1]
                     i += 1
                 block["fields"] = {"NAME": num}
 
             elif func == "wait":
                 num = ''
-                while i+1 < len(function_calls) and function_calls[i+1].isdigit():
-                    num += function_calls[i+1]
+                while i+1 < len(function_sequence) and function_sequence[i+1].isdigit():
+                    num += function_sequence[i+1]
                     i += 1
                 block["fields"] = {"wait_wait": num}
 

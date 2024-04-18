@@ -5,6 +5,7 @@ import { BlocklyOptions } from 'blockly';
 import { cppGenerator } from './generators/cpp';
 import { environment } from '../../../../environments/environment';
 import { BlockService } from '../../../services/block.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-blockly',
@@ -15,7 +16,7 @@ export class BlocklyComponent implements AfterViewInit {
   @ViewChild('blocklyDiv') blocklyDiv!: ElementRef;
   blocks: any;
 
-  constructor(private blockService: BlockService) {}
+  constructor(private blockService: BlockService, private http: HttpClient) {}
 
   async ngAfterViewInit() {
     // Add timeout for the blockService to load the toolbox
@@ -51,38 +52,19 @@ export class BlocklyComponent implements AfterViewInit {
     this.blockService.loadSavedContext();
   }
 
-  finish() {
+  runCode() {
     const code = cppGenerator.workspaceToCode(Blockly.getMainWorkspace());
-    const formData = new FormData();
-    formData.append(
-      'file',
-      new Blob([code], { type: 'text/plain' }),
-      'code.cpp'
-    );
 
-    console.log('Production API URL: ', environment.apiUrl);
-
-    fetch(`${environment.apiUrl}/compiler/compile`, {
-      method: 'POST',
-      body: formData,
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Failed to download file');
+    this.http.post(`${environment.apiUrl}/compiler/compile`, code).subscribe(
+      (res: any) => {
+        if (!res.ok) {
+          throw new Error('Error compiling code');
         }
-        return response.blob();
-      })
-      .then((blob) => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'compiled.exe'; // Set the filename for the downloaded file
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-      })
-      .catch((error) => {
-        console.error('Error downloading file:', error);
-      });
+        return res;
+      },
+      (err) => {
+        console.error(err);
+      }
+    );
   }
 }

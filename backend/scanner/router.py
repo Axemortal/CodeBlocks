@@ -1,6 +1,6 @@
 from fastapi import APIRouter, File, UploadFile
 from fastapi.responses import JSONResponse
-from scanner.dependencies import analyse_spatial_arrangement, build_function_calls, translate_code
+from scanner.dependencies import analyse_spatial_arrangement_upload, analyse_spatial_arrangement_scan, map_functions, map_blocks
 from qreader import QReader
 import cv2
 import numpy as np
@@ -14,23 +14,23 @@ qreader = QReader()
 
 cached_results = []
 
-# Clear the scan cache
+
 async def clear_scan_cache():
     cached_results.clear()
 
-# Update the scan cache and check for consensus
+
 async def update_scan_cache(assembled_code):
     cached_results.append(assembled_code)
-    if len(cached_results) > 3:
+    if len(cached_results) > 2:
         cached_results.pop(0)  # Maintain only the last three results
 
     # Check if all three entries are the same and there are exactly three entries
-    if len(cached_results) == 3 and all(code == cached_results[0] for code in cached_results):
+    if len(cached_results) == 2 and all(code == cached_results[0] for code in cached_results):
         return True
-    
+
     return False
 
-# Credit for this idea goes to the great Tan Shao Chong!
+
 @router.post("/scan")
 async def scan_code(videoFrame: UploadFile = File(...)):
     try:
@@ -40,36 +40,32 @@ async def scan_code(videoFrame: UploadFile = File(...)):
 
         decoded_objects = qreader.detect_and_decode(
             image, return_detections=True)
-        
+
         if decoded_objects:
             qr_data = decoded_objects[0]
             metadata = decoded_objects[1]
 
-            function_structure = analyse_spatial_arrangement(qr_data, metadata)
-            function_calls = build_function_calls(function_structure)
+        if len(qr_data) > 0:
+            function_structure = analyse_spatial_arrangement_scan(qr_data, metadata)
+            function_sequence = map_functions(function_structure)
+            code_blocks = map_blocks(function_sequence)
 
-            print(f"Assembled Code Block: {function_calls}")
-
-            consensus_reached = await update_scan_cache(function_calls)
+            print(f"Assembled Code Block: {function_sequence}")
+            consensus_reached = await update_scan_cache(function_sequence)
             if consensus_reached:
                 await clear_scan_cache()  # Clear the cache once consensus is reached
                 return JSONResponse({
                     "message": "Consensus reached on QR code interpretation.",
-                    "code": function_calls
+                    "code": code_blocks
                 })
-            else:
-                return JSONResponse({
-                    "message": "Consensus not yet reached, continue scanning.",
-                    "temp_code": function_calls  # Return the temporarily built function calls
-                }, status_code=202)
 
         else:
             return JSONResponse({"message": "No QR code detected in the frame"}, status_code=400)
 
     except Exception as e:
         await clear_scan_cache()  # Clear cache in case of error to prevent stale data
-        print(f"Failed to process video frame: {repr(e)}")
         return JSONResponse({"message": "Failed to process the video frame"}, status_code=500)
+
 
 @router.post("/upload")
 async def upload_image(image: UploadFile = File(...)):
@@ -81,15 +77,18 @@ async def upload_image(image: UploadFile = File(...)):
         decoded_objects = qreader.detect_and_decode(
             image, return_detections=True)
 
-        qr_data = decoded_objects[0]
-        metadata = decoded_objects[1]
+        if decoded_objects:
+            qr_data = decoded_objects[0]
+            metadata = decoded_objects[1]
+        else:
+            print(decoded_objects)
 
         if len(qr_data) > 0:
-            function_structure = analyse_spatial_arrangement(qr_data, metadata)
-            function_calls = build_function_calls(function_structure)
-            code_blocks = translate_code(function_calls)
+            function_structure = analyse_spatial_arrangement_upload(qr_data, metadata)
+            function_sequence = map_functions(function_structure)
+            code_blocks = map_blocks(function_sequence)
 
-            print(f"Assembled Code Block: {function_calls}")
+            print(f"Assembled Code Block: {function_sequence}")
             return JSONResponse({"message": "Image uploaded successfully", "code": code_blocks})
 
         else:
@@ -100,7 +99,7 @@ async def upload_image(image: UploadFile = File(...)):
         return JSONResponse({"message": "Failed to process the image"}, status_code=500)
 
 
-'''Commented out old version'''
+# TODO - Delete if not needed
 # @ router.post("/scan")
 # async def scan_code(videoFrame: UploadFile = File(...)):
 #     try:

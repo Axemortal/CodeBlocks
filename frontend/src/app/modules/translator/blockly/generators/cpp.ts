@@ -30,14 +30,12 @@ cppGenerator.forBlock['stop'] = function (block, generator) {
 };
 
 cppGenerator.forBlock['quack'] = function (block, generator) {
-  // TODO - Add CPP Code
-  const code = '...\n';
+  const code = 'quack()';
   return code;
 };
 
 cppGenerator.forBlock['wait'] = function (block, generator) {
-  // TODO - Update implementation
-  const delay_ms = block.getFieldValue('WAIT');
+  const delay_ms = block.getFieldValue('wait_wait');
   let code = '';
   if (delay_ms) {
     code = `delay(${delay_ms}000)`;

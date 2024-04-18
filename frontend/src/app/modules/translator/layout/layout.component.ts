@@ -17,6 +17,6 @@ export class LayoutComponent {
   }
 
   runCode() {
-    this.blocklyComponent.finish();
+    this.blocklyComponent.runCode();
   }
 }

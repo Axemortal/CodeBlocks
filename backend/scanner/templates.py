@@ -24,20 +24,3 @@ id_mappings = {
     "14": "repeat",
     "15": "end-repeat",
 }
-
-# TODO - Delete if not needed
-archive = {
-    "01": lambda condition: f"move_forward({condition})",
-    "02": lambda condition: f"move_backward({condition})",
-    "03": lambda condition: f"turn_left({condition})",
-    "04": lambda condition: f"turn_right({condition})",
-    "05": lambda condition: f"stop({condition})",
-    "06": lambda condition: f"wait({condition})",
-    "07": lambda condition: f"quack({condition})",
-    "08": lambda condition: f"if({condition})",
-    "09": lambda condition: f"else({condition})",
-    "10": lambda condition: f"end-if({condition})",
-    "11": lambda condition: f"end-else({condition})",
-    "12": lambda condition: f"obstacle_front({condition})",
-    "13": lambda condition: f"clap({condition})"
-}
