@@ -28,7 +28,7 @@ export class UploadComponent implements AfterViewInit {
     const file: File = event.target.files[0];
     if (file) {
       const formData = new FormData();
-      formData.append('image', file);
+      formData.append('upload_file', file);
       this.http
         .post(`${environment.apiUrl}/scanner/upload`, formData)
         .subscribe(

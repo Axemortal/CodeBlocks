@@ -1,11 +1,14 @@
 from fastapi import APIRouter, HTTPException, Request
-import subprocess
 import os
+
+from compiler.dependencies import cleanup, compile_sketch, upload_sketch
 
 router = APIRouter(
     tags=['Compiler'],
     prefix='/compiler'
 )
+
+DEVICE_IP = "192.168.248.21"
 
 
 @router.post('/compile')
@@ -26,27 +29,11 @@ async def compile_code(request: Request):
         with open(dest_file_path, 'w', encoding='utf-8') as new_file:
             new_file.write(modified_data)
 
-    def compile_sketch():
-        compile_command = ['arduino-cli', 'compile', '-b',
-                           'esp32:esp32:esp32doit-devkit-v1', os.path.join(file_path, 'ino')]
-        subprocess.run(compile_command, check=True)
-
-    def upload_sketch():
-        upload_command = ['arduino-cli', 'upload', os.path.join(file_path, 'ino'), '-b',
-                          'esp32:esp32:esp32doit-devkit-v1', '-p', '192.168.248.21', '--upload-field', 'password=abc']
-        subprocess.run(upload_command, check=True)
-
     try:
-        compile_sketch()
-        upload_sketch()
-    except subprocess.CalledProcessError as e:
+        compile_sketch(os.path.join(file_path, 'ino'))
+        upload_sketch(os.path.join(file_path, 'ino'), DEVICE_IP)
+        cleanup(os.path.join(file_path, 'ino'))
+    except Exception as e:
         raise HTTPException(status_code=500, detail=f"Compilation failed: {e}")
 
-    # # Check if the executable file was created successfully
-    # if not os.path.exists(f'{executable_name}.exe'):
-    #     raise HTTPException(
-    #         status_code=500, detail="Compilation failed: Executable file was not created")
-
-    # os.remove(f'{executable_name}.exe')
-
-    return "Code has been compiled successfully."
+    return "Code has been compiled and uploaded successfully."

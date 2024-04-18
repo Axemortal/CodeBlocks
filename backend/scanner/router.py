@@ -1,128 +1,66 @@
-from fastapi import APIRouter, File, UploadFile
+from fastapi import APIRouter, File, HTTPException, UploadFile
 from fastapi.responses import JSONResponse
-from scanner.dependencies import analyse_spatial_arrangement_upload, analyse_spatial_arrangement_scan, map_functions, map_blocks
-from qreader import QReader
-import cv2
-import numpy as np
+from scanner.dependencies import analyse_qr_layout, extract_image_from_upload, map_functions, map_blocks, HEIGHT_TOLERANCE_SCAN, HEIGHT_TOLERANCE_UPLOAD, detect_and_decode_qr_codes
 
 router = APIRouter(
     tags=['Scanner'],
     prefix='/scanner'
 )
 
-qreader = QReader()
-
-cached_results = []
-
-
-async def clear_scan_cache():
-    cached_results.clear()
+SCAN_CONSENSUS_THRESHOLD = 2
+scan_cache = []
 
 
-async def update_scan_cache(assembled_code):
-    cached_results.append(assembled_code)
-    if len(cached_results) > 2:
-        cached_results.pop(0)  # Maintain only the last three results
-
-    # Check if all three entries are the same and there are exactly three entries
-    if len(cached_results) == 2 and all(code == cached_results[0] for code in cached_results):
-        return True
-
-    return False
+def clear_scan_cache():
+    scan_cache.clear()
 
 
 @router.post("/scan")
-async def scan_code(videoFrame: UploadFile = File(...)):
+async def scan_code(upload_file: UploadFile = File(...)):
     try:
-        contents = await videoFrame.read()
-        nparr = np.frombuffer(contents, np.uint8)
-        image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-
-        decoded_objects = qreader.detect_and_decode(
-            image, return_detections=True)
-
-        if decoded_objects:
-            qr_data = decoded_objects[0]
-            metadata = decoded_objects[1]
+        image = await extract_image_from_upload(upload_file)
+        qr_data, metadata = detect_and_decode_qr_codes(image)
 
         if len(qr_data) > 0:
-            function_structure = analyse_spatial_arrangement_scan(qr_data, metadata)
+            function_structure = analyse_qr_layout(
+                qr_data, metadata, HEIGHT_TOLERANCE_SCAN)
             function_sequence = map_functions(function_structure)
-            code_blocks = map_blocks(function_sequence)
 
-            print(f"Assembled Code Block: {function_sequence}")
-            consensus_reached = await update_scan_cache(function_sequence)
-            if consensus_reached:
-                await clear_scan_cache()  # Clear the cache once consensus is reached
-                return JSONResponse({
-                    "message": "Consensus reached on QR code interpretation.",
-                    "code": code_blocks
-                })
+            if len(function_sequence) > 0:
+                if len(scan_cache) > SCAN_CONSENSUS_THRESHOLD:
+                    scan_cache.pop(0)
 
+                if all(code == scan_cache[0] for code in scan_cache):
+                    clear_scan_cache()
+                    return JSONResponse({
+                        "message": "Consensus reached on QR code interpretation.",
+                        "code": map_blocks(function_sequence)
+                    })
         else:
-            return JSONResponse({"message": "No QR code detected in the frame"}, status_code=400)
+            return JSONResponse({"message": "No QR code detected in the frame"})
 
     except Exception as e:
-        await clear_scan_cache()  # Clear cache in case of error to prevent stale data
-        return JSONResponse({"message": "Failed to process the video frame"}, status_code=500)
+        clear_scan_cache()
+        raise HTTPException(
+            status_code=500, detail=f"Failed to process the video frame: {e}")
 
 
 @router.post("/upload")
-async def upload_image(image: UploadFile = File(...)):
+async def upload_image(upload_file: UploadFile = File(...)):
     try:
-        contents = await image.read()
-        nparr = np.frombuffer(contents, np.uint8)
-        image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        image = await extract_image_from_upload(upload_file)
 
-        decoded_objects = qreader.detect_and_decode(
-            image, return_detections=True)
-
-        if decoded_objects:
-            qr_data = decoded_objects[0]
-            metadata = decoded_objects[1]
-        else:
-            print(decoded_objects)
+        qr_data, metadata = detect_and_decode_qr_codes(image)
 
         if len(qr_data) > 0:
-            function_structure = analyse_spatial_arrangement_upload(qr_data, metadata)
+            function_structure = analyse_qr_layout(
+                qr_data, metadata, HEIGHT_TOLERANCE_UPLOAD)
             function_sequence = map_functions(function_structure)
             code_blocks = map_blocks(function_sequence)
-
-            print(f"Assembled Code Block: {function_sequence}")
             return JSONResponse({"message": "Image uploaded successfully", "code": code_blocks})
-
         else:
             return JSONResponse({"message": "No QR code detected in the image"}, status_code=400)
 
     except Exception as e:
-        print(f"Failed to process image: {repr(e)}")
-        return JSONResponse({"message": "Failed to process the image"}, status_code=500)
-
-
-# TODO - Delete if not needed
-# @ router.post("/scan")
-# async def scan_code(videoFrame: UploadFile = File(...)):
-#     try:
-#         contents = await videoFrame.read()
-#         nparr = np.frombuffer(contents, np.uint8)
-#         image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-#         print(image)
-
-#         decoded_objects = qreader.detect_and_decode(
-#             image, return_detections=True)
-#         if decoded_objects:
-#             qr_data = decoded_objects[0]
-#             metadata = decoded_objects[1]
-
-#             function_structure = analyse_spatial_arrangement(qr_data, metadata)
-#             function_calls = build_function_calls(function_structure)
-
-#             print(f"Assembled Code Block: {function_calls}")
-#             return JSONResponse({"message": "Video stream uploaded successfully", "code": function_calls})
-
-#         else:
-#             return JSONResponse({"message": "No QR code detected in the frame"}, status_code=400)
-
-#     except Exception as e:
-#         print(f"Failed to process image: {repr(e)}")
-#         return JSONResponse({"message": "Failed to process the image"}, status_code=500)
+        raise HTTPException(
+            status_code=500, detail=f"Failed to process the image: {e}")
