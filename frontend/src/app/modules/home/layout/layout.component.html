@@ -1,17 +1,15 @@
-<div class="container">
-  <div *ngIf="!isOpenCamera; else appCapture">
-    <app-welcome></app-welcome>
+<div *ngIf="!isOpenCamera; else appCapture" class="container">
+  <app-welcome></app-welcome>
 
-    <div class="action-container">
-      <app-upload></app-upload>
-      <button
-        *ngIf="isSupported; else notSupported"
-        class="btn text"
-        (click)="openCamera()"
-      >
-        Start Recording
-      </button>
-    </div>
+  <div class="action-container">
+    <app-upload></app-upload>
+    <button
+      *ngIf="isSupported; else notSupported"
+      class="btn text"
+      (click)="openCamera()"
+    >
+      Start Recording
+    </button>
 
     <ng-template #notSupported>
       <div class="not-supported">
@@ -20,13 +18,13 @@
       </div>
     </ng-template>
   </div>
-
-  <ng-template #appCapture>
-    <div class="capture-container">
-      <app-capture></app-capture>
-      <div class="action-container">
-        <button class="btn text" (click)="closeCamera()">Stop Recording</button>
-      </div>
-    </div>
-  </ng-template>
 </div>
+
+<ng-template #appCapture>
+  <div class="container">
+    <app-capture></app-capture>
+    <div class="action-container">
+      <button class="btn text" (click)="closeCamera()">Stop Recording</button>
+    </div>
+  </div>
+</ng-template>

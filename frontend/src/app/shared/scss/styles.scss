@@ -2,59 +2,24 @@
 
 @import "reset";
 @import url("https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap");
-@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&family=Poppins:ital,wght@0,400;1,900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&family=Poppins:ital,wght@0,400;1,900&display=swap");
 
 // Start - Styling for the background
-:root {
-  --g1: rgb(51, 38, 68);
-  --g2: #8535D4;
+body {
+  background: #8535d4;
+  height: 100vh;
+  overflow: hidden;
+  margin: 0px;
 }
-
-@keyframes background-pan {
-  from {
-    background-position: 0% center;
-  }
-
-  to {
-    background-position: -200% center;
-  }
-}
-
-body{
-  background: #8535D4
-}
-
-// body {
-//   animation: background-pan 10s linear infinite;
-//   background: linear-gradient(to right, var(--g1), var(--g2), var(--g1));
-//   background-size: 200%;
-//   height: 100vh;
-//   overflow: hidden;
-//   margin: 0px;
-// }
-
 // End - Styling for the background
 
 // Start - Defining fonts
-@font-face {
-  font-family: "Dancing Script";
-  src: url("../../../assets/fonts/Dancing_Script/DancingScript-VariableFont_wght.ttf")
-    format("truetype");
-  font-weight: normal;
-  font-style: normal;
-}
-
 @font-face {
   font-family: "Poppins", sans-serif;
   src: url("../../../assets/fonts/Poppins/Poppins-Regular.ttf")
     format("truetype");
   font-weight: 400;
-  font-style: normal;  
-  // font-family: "Rubik";
-  // src: url("../../../assets/fonts/Rubik/Rubik-VariableFont_wght.ttf")
-  //   format("truetype");
-  // font-weight: normal;
-  // font-style: normal;
+  font-style: normal;
 }
 // End - Defining fonts
 
@@ -62,9 +27,9 @@ body{
   display: inline-block;
   box-sizing: border-box;
   margin: 0 0 10px 0;
-  border-style: none;
-  padding: 10px 16px;
+  border: none;
   border-radius: 10px;
+  padding: 10px 16px;
   background-color: #ffd23f;
   color: #000000;
   box-shadow: 0 4px 12px #ececec9e;
@@ -75,7 +40,6 @@ body{
   text-decoration: none;
   transition: all 0.3s ease-in-out;
   cursor: pointer;
-
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
