@@ -4,13 +4,12 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-layout',
   templateUrl: './layout.component.html',
-  styleUrl: './layout.component.scss'
+  styleUrl: './layout.component.scss',
 })
 export class LayoutComponent {
-  constructor(private router: Router){}
-  
-  goToHome(){
-    console.log("y")
+  constructor(private router: Router) {}
+
+  goToHome() {
     this.router.navigate(['/home']);
   }
 }

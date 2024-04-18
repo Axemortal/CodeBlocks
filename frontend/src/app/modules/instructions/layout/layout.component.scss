@@ -1,50 +1,41 @@
 .instuction-container {
   display: flex;
   flex-direction: column;
-  margin: auto;
+  justify-content: center;
+  margin: 0 auto;
   padding: 20px;
   width: 80vw;
-  color: black;
-  text-align: justify;
-  transition: opacity 1200ms ease;
-  pointer-events: none;
 
   > div:first-of-type {
     margin-bottom: 20px;
     font-size: 45px;
-    color: #ffd23f;;
+    color: #ffd23f;
   }
 
   > div:nth-of-type(2) {
-    font-size: 20px;
-    margin-bottom: 10px;
+    background-color: azure;
+    border-radius: 15px;
+    padding: 10px;
 
     > div {
       margin-bottom: 10px;
+      text-align: left;
+    }
+
+    > div:first-of-type {
+      font-size: 25px;
+    }
+
+    > div:nth-of-type(2) {
+      font-family: "Poppins", sans-serif;
+      font-size: 20px;
     }
   }
-}
 
-.container{
-  background-color: azure;
-  border-radius: 15px;
-  padding: 10px;
-}
-
-.smaller-text{
-  font-size: 25px;
-  text-align: left;
-  padding: 0px;
-}
-
-.details-text{
-  font-family: "Poppins", sans-serif;
-  text-align: left;
-}
-
-.btn{
-  font-size: 20px;
-  width: 30vw;
-  margin: auto;
-  margin-top: 20px;
+  .btn {
+    font-size: 20px;
+    margin: 20px auto 0;
+    width: 30vw;
+    min-width: 100px;
+  }
 }
