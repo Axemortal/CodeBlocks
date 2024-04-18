@@ -3,24 +3,22 @@ import * as Blockly from 'blockly';
 export const cppGenerator = new Blockly.Generator('cpp');
 
 cppGenerator.forBlock['move_forward'] = function (block) {
-  const code = 'forward(motorL, motorR, 150)';
+  const code = 'move_forward()';
   return code;
 };
 
 cppGenerator.forBlock['move_backward'] = function (block, generator) {
-  const code = 'back(motorL, motorR, 150)';
+  const code = 'move_back()';
   return code;
 };
 
 cppGenerator.forBlock['turn_left'] = function (block, generator) {
-  const code = `motorL.drive(-255,1000);
-motorR.drive(255,1000)`;
+  const code = `turn_left()`;
   return code;
 };
 
 cppGenerator.forBlock['turn_right'] = function (block, generator) {
-  const code = `motorL.drive(255,1000);
-motorR.drive(-255,1000)`;
+  const code = `turn_right()`;
   return code;
 };
 
@@ -60,6 +58,7 @@ cppGenerator.forBlock['if'] = function (block, generator) {
   const condition = generator.statementToCode(block, 'if_if');
   const if_do = generator.statementToCode(block, 'if_do');
   const code = `update();
+measure();
 if(${condition}) {
 ${if_do}
 }`;
@@ -77,7 +76,7 @@ ${repeat_do}
 };
 
 cppGenerator.forBlock['obstacle_front'] = function (block, generator) {
-  const code = 'distance < 10';
+  const code = 'distance < 5';
   return code;
 };
 

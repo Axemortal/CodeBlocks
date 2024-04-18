@@ -22,30 +22,56 @@ const char* password = "codeblocks";
 
 // Buzzer pins
 #define buzzPin 34
-
-// Loop init
 unsigned long previousMillis = 0; // will store last time LED was updated
 const long interval = 1000; // interval at which to blink (milliseconds)
 int repeatState = LOW; // ledState used to set the LEDo
 
-// Motor init
 // these constants are used to allow you to make your motor configuration 
 // line up with function names like forward.  Value can be 1 or -1
 const int offsetR = -1;
-const int offsetL = 1;
+const int offsetL = -1;
 
+// Motor init
 // Initializing motors.  The library will allow you to initialize as many
 // motors as you have memory for.  If you are using functions like forward
 // that take 2 motors as arguements you can either write new functions or
 // call the function more than once.
-Motor motorL = Motor(AIN1, AIN2, PWMA, offsetR, STBY);
-Motor motorR = Motor(BIN1, BIN2, PWMB, offsetL, STBY);
+Motor motorR = Motor(AIN1, AIN2, PWMA, offsetR, STBY);
+Motor motorL = Motor(BIN1, BIN2, PWMB, offsetL, STBY);
 
 // Ultrasonic init
 float duration, distance;
-bool clap = false;
+
+void move_forward() {
+  update();
+  forward(motorL, motorR, 100);
+  delay(1000);
+  brake(motorL, motorR);
+}
+  
+void move_back() {
+  update();
+  back(motorL, motorR, 100);
+  delay(1000);
+  brake(motorL, motorR);
+}
+
+void turn_left() {
+  update();
+  left(motorL, motorR, 100);
+  delay(1000);
+  brake(motorL, motorR);
+}
+
+void turn_right() {
+  update();
+  right(motorL, motorR, 100);
+  delay(1000);
+  brake(motorL, motorR);
+}
 
 void quack() {
+  update();
   tone(buzzPin, 1000);
   delay(1000);
   noTone(buzzPin);
@@ -54,22 +80,21 @@ void quack() {
 void update() {
   // Listen for OTA updates
   ArduinoOTA.handle();
-
   // Update distance (cm)
-  digitalWrite(trigPin, LOW);
-  delayMicroseconds(2);
-  digitalWrite(trigPin, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin, LOW);
-  duration = pulseIn(echoPin, HIGH);
-  distance = (duration*.0343)/2;
-  Serial.print("Distance: ");
-  Serial.println(distance);
+    digitalWrite(trigPin, LOW);
+    delayMicroseconds(2);
+    digitalWrite(trigPin, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(trigPin, LOW);
+    duration = pulseIn(echoPin, HIGH);
+    distance = (duration*.0343)/2;
+    Serial.print("Distance: ");
+    Serial.println(distance);
 
   // TODO: Update clap
 
-  
 }
+
 
 void setup() {
   // OTA setup
@@ -134,12 +159,11 @@ void setup() {
   pinMode(buzzPin, OUTPUT);
   pinMode(LED_BUILTIN, OUTPUT);
 
-  // Done!
-  quack();
-
   // ***
   // BLOCK CODE HERE
   // ***
+  quack();
+
 }
 
 void loop() {
@@ -153,13 +177,7 @@ void loop() {
   repeatState = not(repeatState);
 
   digitalWrite(LED_BUILTIN, repeatState);
-
-  if (repeatState) {
-    // loop ended
-  } else {
-    // loop continues
-  }
+  // set the LED with the ledState of the variable:
   }
   
-    
 }
