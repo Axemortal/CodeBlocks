@@ -43,8 +43,8 @@
   }
 
   .intro-text {
-    margin-bottom: 25px;
-    padding: 10px;
+    // margin-bottom: 25px;
+    // padding: 10px;
     font-family: "Luckiest Guy", cursive;
     font-weight: 400;
     font-size: 40px;
@@ -69,11 +69,14 @@
     margin: 20px auto;
     padding: 15px;
     text-align: center;
+    width: 80vw;
+    margin-left: 0%;
     z-index: -2;
 
     > .duck{
       width: 200px; 
       height: 200px;
+      padding:0px;
       padding-bottom: 10px;
     }
 
@@ -81,7 +84,7 @@
       font-family: "Poppins", sans-serif;
       font-weight: normal;
       font-style: normal;
-      font-size: 35px;
+      font-size: 25px;
       line-height: 1;
       color: whitesmoke;
     }
