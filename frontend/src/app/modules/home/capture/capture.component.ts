@@ -52,28 +52,18 @@ export class CaptureComponent implements AfterViewInit {
 
   @HostListener('window:resize', ['$event'])
   onResize(event: Event): void {
-    this.calculateAspectRatio();
+    this.resizeVideo();
   }
 
-  calculateAspectRatio(): void {
-    const componentWidth = this.elementRef.nativeElement.clientWidth;
-    const componentHeight = this.elementRef.nativeElement.clientHeight;
-
-    const componentAspectRatio = componentWidth / componentHeight;
-
+  resizeVideo(): void {
     if (!this.aspectRatio) {
       return;
     }
 
-    if (componentAspectRatio < this.aspectRatio) {
-      this.videoContainerWidth = componentWidth + 'px';
+    const videoWidth = 0.85 * window.innerWidth
+    this.videoContainerWidth = videoWidth + 'px';
       this.videoContainerHeight =
-        (componentWidth / this.aspectRatio).toString() + 'px';
-    } else {
-      this.videoContainerHeight = componentHeight + 'px';
-      this.videoContainerWidth =
-        (componentHeight * this.aspectRatio).toString() + 'px';
-    }
+        (videoWidth / this.aspectRatio).toString() + 'px';
   }
 
   private initializeCamera(): void {
@@ -97,7 +87,7 @@ export class CaptureComponent implements AfterViewInit {
       .getUserMedia(mediaConstraints)
       .then((stream) => {
         this.aspectRatio = stream.getVideoTracks()[0].getSettings().aspectRatio;
-        this.calculateAspectRatio();
+        this.resizeVideo();
         this.video.srcObject = stream;
         // this.video.setAttribute('playsinline', 'true'); // required to tell iOS safari we don't want fullscreen
         this.video.play();
