@@ -9,6 +9,7 @@ import {
 
 import jsQR, { QRCode } from 'jsqr';
 import { Point } from 'jsqr/dist/locator';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-capture',
@@ -174,15 +175,10 @@ export class CaptureComponent implements AfterViewInit {
   }
 
   private isValidCode(data: string): boolean {
-    const uuidPattern =
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-
-    const uniqueIdentifier = data.split(':')[0];
-    const block = data.split(':')[1];
-    if (uuidPattern.test(uniqueIdentifier) && block in BlockQRCode) {
-      return true;
+    if (isNaN(parseInt(data))) {
+      return false;
     }
-    return false;
+    return true;
   }
 
   private checkForRepeatedQRCode(code: QRCode): boolean {
@@ -216,7 +212,7 @@ export class CaptureComponent implements AfterViewInit {
       formData.append('videoFrame', blob, 'videoFrame.png');
 
       // Send the video frame to the backend
-      this.http.post('http://localhost:8000/scanner/scan', formData).subscribe(
+      this.http.post(`${environment.apiUrl}/scanner/scan`, formData).subscribe(
         (response) => {
           console.log('Response from backend:', response);
         },
@@ -226,20 +222,4 @@ export class CaptureComponent implements AfterViewInit {
       );
     }
   }
-}
-
-enum BlockQRCode {
-  MOVE_FRONT,
-  MOVE_BACK,
-  TURN_LEFT,
-  TURN_RIGHT,
-  IF,
-  WHILE,
-}
-
-interface QRCodeLocation {
-  topRightCorner: Point;
-  topLeftCorner: Point;
-  bottomRightCorner: Point;
-  bottomLeftCorner: Point;
 }
