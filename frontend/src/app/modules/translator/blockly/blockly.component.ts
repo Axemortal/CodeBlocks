@@ -6,6 +6,7 @@ import { cppGenerator } from './generators/cpp';
 import { environment } from '../../../../environments/environment';
 import { BlockService } from '../../../services/block.service';
 import { HttpClient } from '@angular/common/http';
+import { CompilationService } from '../../../services/compilation.service';
 
 @Component({
   selector: 'app-blockly',
@@ -16,7 +17,7 @@ export class BlocklyComponent implements AfterViewInit {
   @ViewChild('blocklyDiv') blocklyDiv!: ElementRef;
   blocks: any;
 
-  constructor(private blockService: BlockService, private http: HttpClient) {}
+  constructor(private blockService: BlockService, private http: HttpClient, private compilationService: CompilationService) {}
 
   async ngAfterViewInit() {
     // Add timeout for the blockService to load the toolbox
@@ -53,16 +54,16 @@ export class BlocklyComponent implements AfterViewInit {
   }
 
   runCode() {
+    this.compilationService.sendData(true);
     const code = cppGenerator.workspaceToCode(Blockly.getMainWorkspace());
 
     this.http.post(`${environment.apiUrl}/compiler/compile`, code).subscribe(
       (res: any) => {
-        if (!res.ok) {
-          throw new Error('Error compiling code');
-        }
+        this.compilationService.sendData(false);
         return res;
       },
       (err) => {
+        this.compilationService.sendData(false);
         console.error(err);
       }
     );

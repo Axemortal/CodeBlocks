@@ -8,7 +8,7 @@ router = APIRouter(
     prefix='/compiler'
 )
 
-DEVICE_IP = "192.168.248.21"
+DEVICE_IP = "192.168.248.59"
 
 
 @router.post('/compile')
@@ -25,6 +25,9 @@ async def compile_code(request: Request):
         data = source_file.read()
 
         modified_data = data.replace('// BLOCK CODE HERE', code)
+
+        if not os.path.exists(os.path.join(file_path, 'ino')):
+            os.makedirs(os.path.join(file_path, 'ino'))  # Create the directory if it doesn't exist
 
         with open(dest_file_path, 'w', encoding='utf-8') as new_file:
             new_file.write(modified_data)

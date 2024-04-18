@@ -58,8 +58,9 @@
     "message0": "Wait %1",
     "args0": [
       {
-        "type": "input_value",
-        "name": "wait_wait"
+        "type": "field_number",
+        "name": "wait_wait",
+        "value": 0
       }
     ],
     "previousStatement": null,

@@ -1,6 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { BlocklyComponent } from '../blockly/blockly.component';
+import { CompilationService } from '../../../services/compilation.service';
 
 @Component({
   selector: 'app-layout',
@@ -9,16 +10,19 @@ import { BlocklyComponent } from '../blockly/blockly.component';
 })
 export class LayoutComponent {
   @ViewChild('blocklyComponent') blocklyComponent!: BlocklyComponent;
-  runningCode = false;
+  isCompiling = false
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private compilationService:CompilationService) {
+    this.compilationService.getData().subscribe(isCompiling => {
+      this.isCompiling = isCompiling;
+  });
+  }
 
   endRun() {
     this.router.navigate(['/home']);
   }
 
   runCode() {
-    this.runningCode = true;
     this.blocklyComponent.runCode();
   }
 }
