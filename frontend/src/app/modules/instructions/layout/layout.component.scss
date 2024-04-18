@@ -1,7 +1,10 @@
 .instuction-container {
+  display: flex;
+  flex-direction: column;
+  margin: auto;
   padding: 20px;
   width: 80vw;
-  color: rgb(186, 228, 185);
+  color: black;
   text-align: justify;
   transition: opacity 1200ms ease;
   pointer-events: none;
@@ -9,13 +12,39 @@
   > div:first-of-type {
     margin-bottom: 20px;
     font-size: 45px;
+    color: #ffd23f;;
   }
 
   > div:nth-of-type(2) {
     font-size: 20px;
+    margin-bottom: 10px;
 
     > div {
       margin-bottom: 10px;
     }
   }
+}
+
+.container{
+  background-color: azure;
+  border-radius: 15px;
+  padding: 10px;
+}
+
+.smaller-text{
+  font-size: 25px;
+  text-align: left;
+  padding: 0px;
+}
+
+.details-text{
+  font-family: "Poppins", sans-serif;
+  text-align: left;
+}
+
+.btn{
+  font-size: 20px;
+  width: 30vw;
+  margin: auto;
+  margin-top: 20px;
 }
