@@ -19,8 +19,7 @@ app.include_router(scanner_router)
 allowed_origins = [
     "http://localhost:3000",  # Allow the Lite Server deploying the frontend in the container
     "http://localhost:4200",  # Allow the Angular Development Server
-    # Allow the deployed frontend on Netlify
-    "https://codeblocktrial.netlify.app"
+    "https://codeblocktrial.netlify.app" # Allow the deployed frontend on Netlify
 ]
 
 # Add CORS middleware to the FastAPI app

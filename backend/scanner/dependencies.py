@@ -1,32 +1,46 @@
 import json
 import uuid
+import cv2
+from fastapi import UploadFile
 import numpy as np
 import os
 from scanner.templates import id_mappings
+from qreader import QReader
 
 HEIGHT_TOLERANCE_UPLOAD = 300
 HEIGHT_TOLERANCE_SCAN = 30
 
-
-def get_row_upload(y):
-    return round(y / HEIGHT_TOLERANCE_UPLOAD)
+qreader = QReader()
 
 
-def get_row_scan(y):
-    return round(y / HEIGHT_TOLERANCE_SCAN)
+async def extract_image_from_upload(frame: UploadFile) -> np.ndarray:
+    try:
+        contents = await frame.read()
+        image = cv2.imdecode(np.frombuffer(
+            contents, np.uint8), cv2.IMREAD_COLOR)
+        return image
+    except Exception as e:
+        raise ValueError("Failed to extract image from the upload file")
 
 
-def get_qr_top_and_left(quad_xy):
+def detect_and_decode_qr_codes(image: np.ndarray):
+    decoded_objects = qreader.detect_and_decode(
+        image, return_detections=True)
+    return decoded_objects[0], decoded_objects[1]
+
+
+def calculate_qr_row(y_coordinate: int, height_tolerance: int) -> int:
+    return round(y_coordinate / height_tolerance)
+
+
+def get_qr_top_and_left(quad_xy: list) -> tuple:
     # Calculate the average top Y coordinate and left X coordinate
     top = np.mean([quad_xy[0][1], quad_xy[1][1]])
     left = np.mean([quad_xy[0][0], quad_xy[3][0]])
     return top, left
 
 
-'''
-Analyses the X and Y values of each QR Code to determine their orders
-'''
-def analyse_spatial_arrangement_upload(qr_data, metadata):
+def analyse_qr_layout(qr_data, metadata, height_tolerance):
     qr_codes_with_positions = []
     for i, data in enumerate(qr_data):
         if i < len(metadata):
@@ -35,8 +49,8 @@ def analyse_spatial_arrangement_upload(qr_data, metadata):
             qr_codes_with_positions.append((data, (top, left)))
 
     sorted_qrs = sorted(qr_codes_with_positions, key=lambda item: (
-        get_row_upload(item[1][0]), item[1][1]))
-    
+        calculate_qr_row(item[1][0], height_tolerance), item[1][1]))
+
     function_structure = []
     current_row = [sorted_qrs[0]]  # Insert first QR Code in first row
 
@@ -46,7 +60,7 @@ def analyse_spatial_arrangement_upload(qr_data, metadata):
             current_row = [item]
         last_qr, (last_top, last_left) = current_row[-1]
 
-        if get_row_upload(top) == get_row_upload(last_top):
+        if calculate_qr_row(top, height_tolerance) == calculate_qr_row(last_top, height_tolerance):
             if item in current_row:
                 continue
             current_row.append(item)
@@ -58,47 +72,9 @@ def analyse_spatial_arrangement_upload(qr_data, metadata):
     if current_row:
         function_structure.append(current_row)
 
-    print(function_structure)
     return function_structure
 
-def analyse_spatial_arrangement_scan(qr_data, metadata):
-    qr_codes_with_positions = []
-    for i, data in enumerate(qr_data):
-        if i < len(metadata):
-            top, left = get_qr_top_and_left(metadata[i]['quad_xy'])
-            # Sample: ("QR Data Here", (100, 200))
-            qr_codes_with_positions.append((data, (top, left)))
 
-    sorted_qrs = sorted(qr_codes_with_positions, key=lambda item: (
-        get_row_scan(item[1][0]), item[1][1]))
-    
-    function_structure = []
-    current_row = [sorted_qrs[0]]  # Insert first QR Code in first row
-
-    for item in sorted_qrs[1:]:
-        qr, (top, left) = item
-        if len(current_row) == 0:
-            current_row = [item]
-        last_qr, (last_top, last_left) = current_row[-1]
-
-        if get_row_scan(top) == get_row_scan(last_top):
-            if item in current_row:
-                continue
-            current_row.append(item)
-
-        else:
-            function_structure.append(current_row)
-            current_row = [item]
-
-    if current_row:
-        function_structure.append(current_row)
-
-    print(function_structure)
-    return function_structure
-
-'''
-Iterate through the formatted list to achieve function calls
-'''
 def map_functions(function_structure):
     function_sequence = []
 

@@ -197,8 +197,7 @@ export class CaptureComponent implements AfterViewInit {
       const blob = new Blob([byteArray], { type: 'image/png' });
       const formData = new FormData();
 
-      formData.append('videoFrame', videoFrame);
-      formData.append('videoFrame', blob, 'videoFrame.png');
+      formData.append('upload_file', blob, 'videoFrame.png');
 
       // Send the video frame to the backend
       this.http.post(`${environment.apiUrl}/scanner/scan`, formData).subscribe(
