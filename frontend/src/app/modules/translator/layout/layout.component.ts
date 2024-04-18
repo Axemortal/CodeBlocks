@@ -9,6 +9,7 @@ import { BlocklyComponent } from '../blockly/blockly.component';
 })
 export class LayoutComponent {
   @ViewChild('blocklyComponent') blocklyComponent!: BlocklyComponent;
+  runningCode = false;
 
   constructor(private router: Router) {}
 
@@ -17,6 +18,7 @@ export class LayoutComponent {
   }
 
   runCode() {
+    this.runningCode = true;
     this.blocklyComponent.runCode();
   }
 }

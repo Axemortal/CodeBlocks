@@ -1,6 +1,11 @@
 <app-blockly #blocklyComponent></app-blockly>
 <div class="container">
     <button class="btn text" (click)="endRun()">Exit</button>
-    <button class="btn text" (click)="runCode()">Run Code</button>
+    <button 
+    *ngIf="!runningCode; else running"
+    class="btn text" (click)="runCode()">Run Code</button>
 </div>
 
+<ng-template #running>
+    <button class="btn running-btn text">Running Now</button>
+</ng-template>

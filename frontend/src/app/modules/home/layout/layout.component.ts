@@ -11,6 +11,8 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import anime from 'animejs/lib/anime.es.js';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-layout',
@@ -28,7 +30,9 @@ export class LayoutComponent implements OnInit, AfterViewInit {
   isSupported = false;
   isOpenCamera = false;
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+  constructor(@Inject(PLATFORM_ID) private platformId: Object,
+  private router: Router)
+  {}
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
@@ -89,5 +93,9 @@ export class LayoutComponent implements OnInit, AfterViewInit {
   @HostListener('window:resize', ['$event'])
   onResize(event: Event): void {
     this.createGrid();
+  }
+
+  finishRecording() {
+    this.router.navigate(['/translator']);
   }
 }
