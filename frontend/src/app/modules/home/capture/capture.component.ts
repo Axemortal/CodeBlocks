@@ -88,7 +88,14 @@ export class CaptureComponent implements AfterViewInit {
     this.output = '⌛ Loading video...';
 
     // Use facingMode: environment to attempt to get the front camera on phones
-    const mediaConstraints = { video: { facingMode: 'environment' } };
+    // TODO - Change if required
+    const mediaConstraints = {
+      video: {
+        facingMode: 'environment',
+        width: { min: 360, ideal: 720, max: 1080 },
+        height: { min: 640, ideal: 1280, max: 1920 },
+      },
+    };
     navigator.mediaDevices
       .getUserMedia(mediaConstraints)
       .then((stream) => {
@@ -202,8 +209,10 @@ export class CaptureComponent implements AfterViewInit {
       // Send the video frame to the backend
       this.http.post(`${environment.apiUrl}/scanner/scan`, formData).subscribe(
         (res: any) => {
-          this.blockService.setCode(res.code);
-          this.router.navigate(['/translator']);
+          if (res.code) {
+            this.blockService.setCode(res.code);
+            this.router.navigate(['/translator']);
+          }
         },
         (err) => {
           console.error('Error sending video frame to backend:', err);
