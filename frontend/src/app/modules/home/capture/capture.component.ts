@@ -88,12 +88,9 @@ export class CaptureComponent implements AfterViewInit {
     this.output = '⌛ Loading video...';
 
     // Use facingMode: environment to attempt to get the front camera on phones
-    // TODO - Change if required
     const mediaConstraints = {
       video: {
         facingMode: 'environment',
-        width: { min: 360, ideal: 720, max: 1080 },
-        height: { min: 640, ideal: 1280, max: 1920 },
       },
     };
     navigator.mediaDevices
@@ -102,7 +99,7 @@ export class CaptureComponent implements AfterViewInit {
         this.aspectRatio = stream.getVideoTracks()[0].getSettings().aspectRatio;
         this.calculateAspectRatio();
         this.video.srcObject = stream;
-        this.video.setAttribute('playsinline', 'true'); // required to tell iOS safari we don't want fullscreen
+        // this.video.setAttribute('playsinline', 'true'); // required to tell iOS safari we don't want fullscreen
         this.video.play();
         this.output = 'Scanning';
         requestAnimationFrame(() => this.tick());
