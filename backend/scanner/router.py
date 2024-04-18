@@ -58,10 +58,7 @@ async def scan_code(videoFrame: UploadFile = File(...)):
                     "code": code_blocks
                 })
             else:
-                return JSONResponse({
-                    "message": "Consensus not yet reached, continue scanning.",
-                    "temp_code": code_blocks  # Return the temporarily built function calls
-                }, status_code=202)
+                print(f"Current Consensus: {len(cached_results)}")
 
         else:
             return JSONResponse({"message": "No QR code detected in the frame"}, status_code=400)

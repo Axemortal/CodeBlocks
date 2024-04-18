@@ -63,7 +63,7 @@ def map_functions(function_structure):
 
     for row in function_structure:
         for func in row:
-            if func is not None:
+            if func[0] is not None:
                 function_sequence.append(id_mappings[func[0]])
 
     return function_sequence
