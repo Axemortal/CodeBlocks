@@ -1,0 +1,21 @@
+.instuction-container {
+  padding: 20px;
+  width: 80vw;
+  color: rgb(186, 228, 185);
+  text-align: justify;
+  transition: opacity 1200ms ease;
+  pointer-events: none;
+
+  > div:first-of-type {
+    margin-bottom: 20px;
+    font-size: 45px;
+  }
+
+  > div:nth-of-type(2) {
+    font-size: 20px;
+
+    > div {
+      margin-bottom: 10px;
+    }
+  }
+}

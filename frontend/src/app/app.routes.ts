@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { LayoutComponent as HomeLayoutComponent } from './modules/home/layout/layout.component';
 import { LayoutComponent as NotFoundLayoutComponent } from './modules/not-found/layout/layout.component';
 import { LayoutComponent as TranslatorLayoutComponent } from './modules/translator/layout/layout.component';
+import { LayoutComponent as InstructionsLayoutComponent } from './modules/instructions/layout/layout.component';
 
 export const routes: Routes = [
   {
@@ -18,6 +19,15 @@ export const routes: Routes = [
     loadChildren: () =>
       import('./modules/translator/translator.module').then(
         (m) => m.TranslatorModule
+      ),
+  },
+  {
+    path: 'instructions',
+    component: InstructionsLayoutComponent,
+    pathMatch: 'full',
+    loadChildren: () =>
+      import('./modules/instructions/instructions.module').then(
+        (m) => m.InstructionsModule
       ),
   },
   {

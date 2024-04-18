@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-welcome',
@@ -6,9 +7,9 @@ import { Component } from '@angular/core';
   styleUrl: './welcome.component.scss',
 })
 export class WelcomeComponent {
-  onInstructions = false;
+  constructor(private router: Router) {}
 
-  goToInstruction(){
-    this.onInstructions = true;
+  goToInstruction() {
+    this.router.navigate(['/instructions']);
   }
 }

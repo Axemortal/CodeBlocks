@@ -1,19 +1,16 @@
 <div class="container">
-  <div *ngIf="!onInstructions; else instructions">
-    <div class="logo">
-      <!-- <h1><span class="stagger"></span></h1> -->
-      <img src="assets/logo.png" alt="image of logo" class="logo" width="378" height="166">
-    </div>
-    <!-- <div class="intro-text">Ready to code <span class="fancy">Player?</span></div> -->
-    <div class="intro-text">Ready to code?</div>
-    <div class="instructions">
-      <img src="assets/duck.png" alt="image of duck" class="btn duck" (click)="goToInstruction()">
-      <div>Use the blocks to make the robot duck move!</div>
-      <div>(Click the duck for more instructions)</div>
-    </div>
+  <div class="logo">
+    <img src="assets/logo.png" alt="Codeblocks Logo" />
+  </div>
+  <div class="intro-text">Ready to code?</div>
+  <div class="instructions">
+    <img
+      src="assets/duck.png"
+      alt="Duck"
+      class="duck"
+      (click)="goToInstruction()"
+    />
+    <div>Use the blocks to make the robot duck move!</div>
+    <div>(Click the duck for more instructions)</div>
   </div>
 </div>
-
-<ng-template #instructions>
-  <p> hello</p>
-</ng-template>
